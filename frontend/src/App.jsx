@@ -1,9 +1,11 @@
-import React from 'react'
+import Events from "./components/Events/Events"
+import Navbar from "./components/Navbar/Navbar"
 
 const App = () => {
   return (
-    <div className='text-green-800 font-semibold'>
-      App
+    <div className="bg-dark-800">
+      <Navbar/>
+      <Events/>
     </div>
   )
 }
