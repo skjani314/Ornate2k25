@@ -1,7 +1,9 @@
-import UserModel from "../../models/UserModel";
-import Otp from "../../models/Otp";
+import UserModel from "../../models/UserModel.js";
+import Otp from "../../models/Otp.js";
 import nodemailer from 'nodemailer';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+import RegisterModel from "../models/RegisterModel.js";
 
 
 const UserLogin = async (req, res, next) => {
@@ -27,8 +29,7 @@ const UserLogin = async (req, res, next) => {
             }
         }
     } catch (error) {
-        console.error("Login error:", error);
-        return res.status(500).json({ message: "Server error" });
+        next(error);
     }
 }
 
@@ -142,7 +143,7 @@ const ForgetPassword = async (req, res, next) => {
                 }
             });
 
-            res.sendStatus(200);
+            res.json(token);
 
         }
     } catch (err) {
@@ -181,7 +182,7 @@ const ForgetVerify = async (req, res, next) => {
 const passChange = async (req, res, next) => {
 
     const { token } = req.body;
-    const pass = req.body.data.password;
+    const pass = req.body.password;
 
     try {
 
@@ -230,11 +231,11 @@ const UserRegister = async (req, res, next) => {
 
                     await Otp.deleteOne({ email });
 
-
-                    if (email.split('@')[0] == 'rguktong.ac.in') {
+                    console.log(email.split('@')[0]);
+                    if (email.split('@')[1] == 'rguktong.ac.in') {
                         const hashpassword = await bcrypt.hash(password, 10);
                         const result = await UserModel.create({ name, email, password: hashpassword, mobile, collage_id, branch })
-                        res.json(result);
+                        res.json("user created succesfully");
 
                     }
                     else {
@@ -251,4 +252,46 @@ const UserRegister = async (req, res, next) => {
 
 }
 
-export { UserLogin, UserRegister, SendOtp, passChange, ForgetPassword };
+const Profile = async (req, res, next) => {
+
+    try {
+
+        const { id } = req.params;
+
+        const result = await UserModel.findById(id).select('-password');
+
+        res.json(result);
+
+    }
+    catch (err) {
+        next(err);
+    }
+}
+
+
+const MyEvents = async (req, res, next) => {
+
+    try {
+
+        const { user_id } = req.params;
+
+        const result_solo = await RegisterModel.find({ user_id });
+        const teams = await TeamModel.find({
+            $or: [{ team_lead: userId }, { members: userId }]
+        })
+            .populate("event_id")
+            .populate("team_lead", "name email")
+            .populate("members", "name email");
+
+        res.json({ teams, result_solo });
+
+
+
+    }
+    catch (err) {
+        next(err);
+    }
+}
+
+
+export { UserLogin, UserRegister, SendOtp, passChange, ForgetPassword, ForgetVerify, Profile, MyEvents };
