@@ -3,13 +3,20 @@ import cors from 'cors';
 import 'dotenv/config';
 import connectDB from './config/mongodb.js'
 import connectCloudinary from './config/cloudinary.js'
+import UserRouter from './routes/UserRouter.js';
 
-
-const app=express();
-const port=process.env.PORT || 5000;
+const app = express();
+const port = process.env.PORT || 5000;
 connectDB();
 connectCloudinary();
 app.use(express.json());
 app.use(cors());
+app.use('/user', UserRouter);
 
-app.listen(port,()=>console.log("Server Started",port))
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    return res.status(500).json({ error: true, message: err.message });
+});
+
+app.listen(port, () => console.log("Server Started", port))
