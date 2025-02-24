@@ -1,7 +1,13 @@
-import React from "react";
+import Events from "./components/Events/Events"
+import Navbar from "./components/Navbar/Navbar"
 
 const App = () => {
-  return <></>;
-};
+  return (
+    <div className="bg-dark-800">
+      <Navbar/>
+      <Events/>
+    </div>
+  )
+}
 
-export default App;
+export default App
