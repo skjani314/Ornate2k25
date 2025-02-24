@@ -79,7 +79,7 @@ const events = [
   },
 ];
 
-const Events = () => {
+const Admin = () => {
   return (
     <div className="min-h-screen p-6">
       <div className="text-center">
@@ -90,11 +90,11 @@ const Events = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-10">
         {events.map((event, index) => (
-          <Card event={event} key={index} id={index} register/>
+          <Card event={event} key={index} id={index}  admin/>
         ))}
       </div>
     </div>
   );
 };
 
-export default Events;
+export default Admin;

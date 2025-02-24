@@ -1,4 +1,6 @@
+import { useState } from "react";
 import Card from "../Card/Card";
+
 const events = [
   {
     name: "Hackathon 2025",
@@ -79,22 +81,55 @@ const events = [
   },
 ];
 
-const Events = () => {
+const MyEvents = () => {
+  const [profileDetails,setProfileDetails]=useState({
+    "name": "John Doe",
+    "email": "johndoe@example.com",
+    "phone": "+1-123-456-7890",
+    "id":"RO20021",
+    "branch":"CSE"
+  })
   return (
     <div className="min-h-screen p-6">
+      
+      <div className="bg-gray-800 shadow-lg rounded-xl p-5 w-2/3 border border-blue-600 mb-5">
+  <div className="border-b border-blue-500 pb-2 mb-4">
+    <h1 className="text-green-300 text-2xl font-bold text-center">Profile Information</h1>
+  </div>
+  <div className="space-y-2">
+    <p className="text-white text-lg">
+      <strong className="text-green-400">Name:</strong> {profileDetails.name}
+    </p>
+    <p className="text-white text-lg">
+      <strong className="text-green-400">Email:</strong> {profileDetails.email}
+    </p>
+    <p className="text-white text-lg">
+      <strong className="text-green-400">Phone:</strong> {profileDetails.phone}
+    </p>
+  
+  <p className="text-white text-lg">
+      <strong className="text-green-400">Id:</strong> {profileDetails.id}
+    </p>
+    <p className="text-white text-lg">
+      <strong className="text-green-400">Branch:</strong> {profileDetails.branch}
+    </p>
+    </div>
+</div>
+
+
       <div className="text-center">
         <h1 className="text-3xl font-bold text-green-300 shadow-lg">
-          Upcoming Events
+          My Events
         </h1>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-10">
         {events.map((event, index) => (
-          <Card event={event} key={index} id={index} register/>
+         <Card key={index} id={index} event={event}/>
         ))}
       </div>
     </div>
   );
 };
 
-export default Events;
+export default MyEvents;

@@ -1,25 +1,29 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { FaBars, FaTimes } from "react-icons/fa"; 
+import { Link } from "react-router-dom";
 
 const navList = [
   { id: "HOME", displayText: "Home" },
-  { id: "MYEVENTS", displayText: "My Events" },
+  { id: "MY-ACCOUNT", displayText: "My Account" },
 ];
 
-const Navbar = () => {
+const Navbar = (props) => {
+  const {fix}=props;
   const [isOpen, setIsOpen] = useState(false); 
 
   return (
-    <nav className="bg-gradient-to-r from-indigo-500 to-indigo-400 p-3">
+    <nav className={`bg-gradient-to-r from-indigo-500 to-indigo-400 p-3 w-full ${fix && 'fixed top-0 left-0 z-10'}`}>
       <div className="flex justify-between items-center max-w-7xl mx-auto">
      
         <div className="flex items-center">
-          <img
-            className="h-[50px] w-auto mr-4"
+         <Link to="/home">
+         <img
+            className="h-[50px] w-auto mr-4 cursor-pointer"
             alt="nav-logo"
             src="https://res.cloudinary.com/dsad92ak9/image/upload/j33zalyizg3ebqpgg9nn"
           />
+         </Link>   
           <h1 className="text-white font-bold text-2xl">TechZeon</h1>
         </div>
 
@@ -27,15 +31,18 @@ const Navbar = () => {
         
     <ul className="hidden md:flex space-x-6 flex items-center">
           {navList.map((each) => (
-            <NavLink
-              key={each.id}
-              to={`/${each.id.toLowerCase()}`}
-              className="text-white font-semibold"
-            >
-              {each.displayText}
-            </NavLink>
+           <NavLink
+           key={each.id}
+           to={`/${each.id.toLowerCase()}`}
+           className=
+             'text-white font-semibold'
+         >
+           {each.displayText}
+           <hr className='border-none outline-none h-0.5 w-4/5 bg-white m-auto hidden'/>
+         </NavLink>
+        
           ))}
-          <button className="hidden md:block bg-green-500 p-2 text-white rounded-xl w-[80px] hover:bg-white hover:text-blue-600 font-bold">
+          <button className="hidden md:block bg-green-500 p-2 text-white rounded-xl w-[80px] hover:bg-white hover:text-green-600 font-bold">
           Login
         </button>
         </ul>       
@@ -59,11 +66,13 @@ const Navbar = () => {
               key={each.id}
               className="text-white font-semibold text-lg"
               onClick={() => setIsOpen(false)}
+              to={`/${each.id.toLowerCase()}`}
             >
               {each.displayText}
+              <hr className='border-none outline-none h-0.5 w-4/5 bg-white m-auto hidden'/>
             </NavLink>
           ))}
-          <button className="bg-green-500 p-2 text-white rounded-xl w-[80px] hover:bg-white hover:text-blue-600 font-bold">
+          <button className="bg-green-500 p-2 text-white rounded-xl w-[80px] hover:bg-white hover:text-green-600 font-bold">
             Login
           </button>
         </div>
