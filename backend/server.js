@@ -11,5 +11,7 @@ connectDB();
 connectCloudinary();
 app.use(express.json());
 app.use(cors());
+app.use('/api/user',)
+
 
 app.listen(port,()=>console.log("Server Started",port))
