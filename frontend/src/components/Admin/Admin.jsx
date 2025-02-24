@@ -82,10 +82,16 @@ const events = [
 const Admin = () => {
   return (
     <div className="min-h-screen p-6">
-      <div className="text-center">
+     <div className="flex justify-between">   
+      <div>
         <h1 className="text-3xl font-bold text-green-300 shadow-lg">
           Upcoming Events
         </h1>
+      </div>
+      <div className="flex">
+        <button className="text-lg text-white mr-4 border w-1/3 px-4 rounded-xl">Add</button>
+        <button className="text-lg  text-white border w-2/3 px-4 rounded-xl">Announcement</button>
+      </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-10">
