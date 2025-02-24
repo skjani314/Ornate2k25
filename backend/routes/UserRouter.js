@@ -1,5 +1,5 @@
 import express from 'express';
-import { ForgetPassword, ForgetVerify, passChange, SendOtp, UserLogin, UserRegister } from '../controllers/User/UserLogIn.js';
+import { ForgetPassword, ForgetVerify, passChange, SendOtp, UserLogin, UserRegister } from '../controllers/UserLogIn.js';
 import { MyEvents, Profile } from '../controllers/UserLogIn.js';
 
 const UserRouter = express.Router();

@@ -1,0 +1,158 @@
+  .fcontainer h1 {
+      font-size: 2em;
+      text-align: center;
+      padding: 30px;
+  }
+
+  .fcontainer input[type="radio"] {
+      width: 15px;
+      height: 15px;
+      background-color: white;
+      border: 1px solid blue;
+      border-radius: 50%;
+      padding: 2px !important;
+  }
+
+  .fcontainer input[type="checkbox"] {
+      cursor: pointer;
+      padding: 2px !important;
+      width: 15px;
+      height: 15px;
+  }
+
+  .fcontainer {
+      margin: 10px auto;
+      width: 100%;
+      background-color: #f2f2f2;
+      padding: 20px;
+      border: solid 1px #d2d2d2;
+      box-shadow: 5px 5px 10px #d2d2d2;
+      padding-right: var(--bs-gutter-x, 0.75rem);
+      padding-left: var(--bs-gutter-x, 0.75rem);
+      margin-right: auto;
+      margin-left: auto;
+      margin-bottom: 10%;
+  }
+
+  form p {
+      color: red
+  }
+
+  .fcontainer:hover {
+      box-shadow: 5px 5px 5px #d2d2d2;
+  }
+
+  .sign-up {
+      height: 70px;
+      border: solid 2px blue;
+      text-align: center;
+  }
+
+  .sign-up:hover,
+  .log-in:hover {
+      font-weight: bold;
+      cursor: pointer;
+  }
+
+  .sign-up-header {
+      margin-top: 23px;
+  }
+
+  .log-in {
+      height: 70px;
+      border: solid 2px blue;
+  }
+
+  .log-in-header {
+      margin-top: 23px;
+      text-align: center;
+  }
+
+  .fcontainer .active {
+      background-color: blue;
+      color: #fff;
+  }
+
+  .fcontainer input {
+      width: 100%;
+      padding: 12px;
+      border: solid 1px blue;
+      margin-top: 10px;
+      font-family: inherit;
+      font-size: large;
+  }
+
+  .first-name,
+  .last-name {
+      width: 49.4%;
+      margin-top: -5px;
+  }
+
+  .last-name {
+      margin-right: 0;
+  }
+
+  .fcontainer ::placeholder {
+      font-style: italic;
+  }
+
+  .email {
+      margin-top: -5px;
+  }
+
+  .fcontainer button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 20px;
+      border: solid 2px blue;
+      background-color: blue;
+      color: #fff;
+      font-size: 1.4em;
+      text-transform: uppercase;
+  }
+
+  .fcontainer button:hover {
+      box-shadow: 5px 5px 10px #d2d2d2;
+      cursor: pointer;
+  }
+
+  #sign-up-form {
+      display: block;
+  }
+
+  #log-in-form {
+      display: none;
+  }
+
+  .password {
+      float: right;
+      font-style: italic;
+      margin-top: 9px
+  }
+
+  .password:hover {
+      font-weight: bold;
+      cursor: pointer;
+  }
+
+  .fcontainer :focus {
+      outline-color: orange;
+  }
+
+  .passicon {
+      font-size: 25px;
+      position: absolute;
+      top: 25px;
+      right: 20px;
+  }
+
+  #sign-up-submit {
+
+      margin-top: 30px;
+      margin-bottom: 30px;
+  }
+
+
+  label {
+      font-size: large;
+  }

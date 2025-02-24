@@ -1,5 +1,5 @@
-import RegisterModel from "../models/RegisterModel";
-import TeamModel from "../models/TeamModel";
+import RegisterModel from "../models/RegisterModel.js";
+import TeamModel from "../models/TeamModel.js";
 
 
 

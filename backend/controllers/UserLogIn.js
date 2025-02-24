@@ -1,10 +1,9 @@
-import UserModel from "../../models/UserModel.js";
-import Otp from "../../models/Otp.js";
+import Otp from "../models/Otp.js";
 import nodemailer from 'nodemailer';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import RegisterModel from "../models/RegisterModel.js";
-
+import UserModel from "../models/UserModel.js"
 
 const UserLogin = async (req, res, next) => {
     try {
