@@ -1,11 +1,12 @@
-import React from 'react'
+import React from "react";
+import { Routes, Route } from "react-router-dom";
 
 const App = () => {
   return (
-    <div className='text-green-800 font-semibold'>
-      App
-    </div>
-  )
-}
+    <Routes>
+      <Route path="/" />
+    </Routes>
+  );
+};
 
-export default App
+export default App;
