@@ -2,6 +2,8 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { FaBars, FaTimes } from "react-icons/fa"; 
 import { Link } from "react-router-dom";
+import { Modal } from "antd";
+import LogIn from "./LogIn";
 
 const navList = [
   { id: "HOME", displayText: "Home" },
@@ -11,7 +13,7 @@ const navList = [
 const Navbar = (props) => {
   const {fix}=props;
   const [isOpen, setIsOpen] = useState(false); 
-
+  const [isModel,setModel]=useState(false);
   return (
     <nav className={`bg-gradient-to-r from-indigo-500 to-indigo-400 p-3 w-full ${fix && 'fixed top-0 left-0 z-10'}`}>
       <div className="flex justify-between items-center max-w-7xl mx-auto">
@@ -42,7 +44,7 @@ const Navbar = (props) => {
          </NavLink>
         
           ))}
-          <button className="hidden md:block bg-green-500 p-2 text-white rounded-xl w-[80px] hover:bg-white hover:text-green-600 font-bold">
+          <button  onClick={()=>setModel(true)} className="hidden md:block bg-green-500 p-2 text-white rounded-xl w-[80px] hover:bg-white hover:text-green-600 font-bold">
           Login
         </button>
         </ul>       
@@ -72,11 +74,15 @@ const Navbar = (props) => {
               <hr className='border-none outline-none h-0.5 w-4/5 bg-white m-auto hidden'/>
             </NavLink>
           ))}
-          <button className="bg-green-500 p-2 text-white rounded-xl w-[80px] hover:bg-white hover:text-green-600 font-bold">
+          <button  className="bg-green-500 p-2 text-white rounded-xl w-[80px] hover:bg-white hover:text-green-600 font-bold">
             Login
           </button>
         </div>
       )}
+
+      <Modal footer={null} onCancel={()=>setModel(false)} open={isModel}>
+       <LogIn/>
+      </Modal>
     </nav>
   );
 };

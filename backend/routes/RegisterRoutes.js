@@ -1,5 +1,5 @@
 import express from 'express';
-import { CreateTeam, DeleteTeam, JoinTeam, RemoveMember, SoloRegister, SoloUnregister } from '../controllers/RegisterControllers';
+import { CreateTeam, DeleteTeam, JoinTeam, RemoveMember, SoloRegister, SoloUnregister } from '../controllers/RegisterControllers.js';
 
 const RegisterRoutes = express.Router();
 

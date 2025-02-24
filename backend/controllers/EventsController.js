@@ -1,6 +1,6 @@
-import EventModel from "../models/EventModel";
-import RegisterModel from "../models/RegisterModel";
-import TeamModel from "../models/TeamModel";
+import EventModel from "../models/EventModel.js";
+import RegisterModel from "../models/RegisterModel.js";
+import TeamModel from "../models/TeamModel.js";
 
 
 
