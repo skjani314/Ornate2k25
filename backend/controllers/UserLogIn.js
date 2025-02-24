@@ -3,6 +3,7 @@ import Otp from "../../models/Otp.js";
 import nodemailer from 'nodemailer';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import RegisterModel from "../models/RegisterModel.js";
 
 
 const UserLogin = async (req, res, next) => {
@@ -251,4 +252,46 @@ const UserRegister = async (req, res, next) => {
 
 }
 
-export { UserLogin, UserRegister, SendOtp, passChange, ForgetPassword, ForgetVerify };
+const Profile = async (req, res, next) => {
+
+    try {
+
+        const { id } = req.params;
+
+        const result = await UserModel.findById(id).select('-password');
+
+        res.json(result);
+
+    }
+    catch (err) {
+        next(err);
+    }
+}
+
+
+const MyEvents = async (req, res, next) => {
+
+    try {
+
+        const { user_id } = req.params;
+
+        const result_solo = await RegisterModel.find({ user_id });
+        const teams = await TeamModel.find({
+            $or: [{ team_lead: userId }, { members: userId }]
+        })
+            .populate("event_id")
+            .populate("team_lead", "name email")
+            .populate("members", "name email");
+
+        res.json({ teams, result_solo });
+
+
+
+    }
+    catch (err) {
+        next(err);
+    }
+}
+
+
+export { UserLogin, UserRegister, SendOtp, passChange, ForgetPassword, ForgetVerify, Profile, MyEvents };

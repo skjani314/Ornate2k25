@@ -4,6 +4,8 @@ import 'dotenv/config';
 import connectDB from './config/mongodb.js'
 import connectCloudinary from './config/cloudinary.js'
 import UserRouter from './routes/UserRouter.js';
+import EventRouter from './routes/EventRouter.js';
+import RegisterRoutes from './routes/RegisterRoutes.js';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -12,6 +14,8 @@ connectCloudinary();
 app.use(express.json());
 app.use(cors());
 app.use('/user', UserRouter);
+app.use('/events', EventRouter);
+app.use('/resiter', RegisterRoutes);
 
 
 app.use((err, req, res, next) => {
