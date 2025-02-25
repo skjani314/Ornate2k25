@@ -20,15 +20,28 @@ const MyEvents = () => {
   const [apiStatus, setApiStatus] = useState(apiStatusConstants.initial);
   const [eventDetails, setEventDetails] = useState([]);
   const [soloEventDetails, setSoloEventDetails] = useState([]);
-  const [profileDetails, setProfileDetails] = useState({
-    name: "John Doe",
-    email: "johndoe@example.com",
-    phone: "+1-123-456-7890",
-    id: "RO20021",
-    branch: "CSE",
-  });
+  const [profileDetails, setProfileDetails] = useState({});
 
-  
+
+  const getProfileDetails=async()=>{
+   try{
+    const url=import.meta.env.VITE_BACKEND_URL+'/user/profile/';
+    const response=await axios.get(url,{headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    }})
+    if(response.status>=200 && response.status<500){
+      setProfileDetails(response.data)
+    }
+   }
+   catch(error){
+    console.log(error)
+   }
+  }
+
+  useEffect(()=>{
+    getProfileDetails();
+  },[])  
  
   const renderLoggedOutView = () => (
     <div className="flex flex-col items-center justify-center min-h-screen text-center">
@@ -55,7 +68,7 @@ const MyEvents = () => {
           "Content-Type": "application/json",
         }
       });
-      console.log(response)
+      
       setEventDetails(response.data.team);
       setSoloEventDetails(response.data.solo);
       setApiStatus(apiStatusConstants.success);
@@ -109,13 +122,10 @@ const MyEvents = () => {
               <strong className="text-green-400">Email:</strong> {profileDetails.email}
             </p>
             <p className="text-white text-lg">
-              <strong className="text-green-400">Phone:</strong> {profileDetails.phone}
+              <strong className="text-green-400">Phone:</strong> {profileDetails.mobile}
             </p>
             <p className="text-white text-lg">
-              <strong className="text-green-400">Id:</strong> {profileDetails.id}
-            </p>
-            <p className="text-white text-lg">
-              <strong className="text-green-400">Branch:</strong> {profileDetails.branch}
+              <strong className="text-green-400">Id:</strong> {profileDetails.collage_id}
             </p>
           </div>
         </div>
