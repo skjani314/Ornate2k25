@@ -1,14 +1,14 @@
 import { IoTimeOutline } from "react-icons/io5";
 import dayjs from "dayjs";
-import { Modal, Form, Input, DatePicker, TimePicker, Button, Upload } from "antd";
+import { Modal, Form, Input, DatePicker, TimePicker, Button, Upload, Row } from "antd";
 import { FaUpload } from 'react-icons/fa';
 import axios from "axios";
 import { useState, useEffect, useContext } from "react";
 import { toast } from 'react-toastify';
 import EventContext from "../../context/EventContext";
+import TeamMemberList from "../MyEvents/TeamMemberList";
 
-
-const Card = ({ event, id, register, admin, getEvents }) => {
+const Card = ({ event, id, register, admin, getEvents, members, team_lead, team_code, team_name, team_id }) => {
   const { user, accessToken } = useContext(EventContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEdit, setEdit] = useState(false);
@@ -18,6 +18,7 @@ const Card = ({ event, id, register, admin, getEvents }) => {
   const [joinTeam, setJoinTeam] = useState({ open: false, team_code: "" });
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
+  const [myteam, setMyTeam] = useState(false);
   const handleUploadChange = ({ fileList }) => {
     setFileList(fileList.reverse());
   };
@@ -85,6 +86,9 @@ const Card = ({ event, id, register, admin, getEvents }) => {
 
   const handleTeam = (e) => {
     e.stopPropagation();
+    setMyTeam(true);
+
+
   }
   const handleEdit = (e) => {
     e.stopPropagation();
@@ -137,7 +141,7 @@ const Card = ({ event, id, register, admin, getEvents }) => {
       const result = await axios.post(url, form_data);
 
       console.log(result);
-setJoinTeam({ open: false, team_code: "" })
+      setJoinTeam({ open: false, team_code: "" })
 
     }
     catch (err) {
@@ -151,7 +155,22 @@ setJoinTeam({ open: false, team_code: "" })
   const teamRegister = () => {
     setIsTeamModalOpen(true);
   };
+  const onDelete = async (user_id) => {
 
+    try {
+      const url = import.meta.env.VITE_BACKEND_URL + '/register/team/remove_member/' + team_id;
+      const form_data = new FormData();
+      form_data.append('user_id', user_id);
+      const result = await axios.put(url, form_data);
+      console.log(result);
+
+
+    }
+    catch (err) {
+      console.log(err);
+    }
+
+  }
 
 
   const handleRegister = (e) => {
@@ -221,6 +240,7 @@ setJoinTeam({ open: false, team_code: "" })
     }
   };
 
+  console.log(event);
   return (
     <>
       <div id={id}
@@ -449,7 +469,39 @@ setJoinTeam({ open: false, team_code: "" })
           </form>
         </div>
       </Modal>
+      <Modal footer={null} open={myteam} onCancel={() => { setMyTeam(false); }} >
+        {event.team_size != '1' ?
+          <div className="bg-gray-800 shadow-lg rounded-xl mt-4 p-5 w-full border border-blue-600 mb-5">
+            <div className="border-b border-blue-500 pb-2 mb-4">
+              <h1 className="text-green-300 text-2xl font-bold text-center">
+                Team Information
+              </h1>
+            </div>
+            <div className="space-y-2">
+              <p className="text-white text-lg">
+                <strong className="text-green-400">Name:</strong> {team_name}
+              </p>
+              <p className="text-white text-lg">
+                <strong className="text-green-400">Team_Code:</strong> {team_code}
+              </p>
+              <p className="text-white text-lg">
+                <strong className="text-green-400">Team_lead:</strong> {team_lead && team_lead.name}
+              </p>
 
+              <h1 className="text-green-300 text-2xl font-bold text-center">
+                Team Members
+              </h1>
+              {
+                members && members.map((each) => (
+                  <TeamMemberList members={members} onDelete={onDelete} />
+                ))
+              }
+
+            </div>
+          </div>
+          : null
+        }
+      </Modal>
     </>
   )
 }
