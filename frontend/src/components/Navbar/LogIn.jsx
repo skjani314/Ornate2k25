@@ -194,10 +194,10 @@ try{
         
 if(role!=="organizer"){
         const token = await axios.post(import.meta.env.VITE_BACKEND_URL+'/user/auth/login',LogData)
-        localStorage.setItem("accessToken", token);
+        localStorage.setItem("accessToken", token.data);
         const result= await axios.get(import.meta.env.VITE_BACKEND_URL+'/user/profile', {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token.data}`,
             "Content-Type": "application/json",
           },
         });
@@ -205,10 +205,10 @@ if(role!=="organizer"){
 }
 else{
   const token=await axios.post(import.meta.env.VITE_BACKEND_URL+'/user/auth/ologin',LogData);
-  localStorage.setItem("accessToken", token);
+  localStorage.setItem("accessToken", token.data);
   const result= await axios.get(import.meta.env.VITE_BACKEND_URL+'/user/oprofile', {
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${token.data}`,
       "Content-Type": "application/json",
     },
   });
@@ -218,7 +218,7 @@ else{
         setLogdata({email:'',password:''});
         
       
-        props.handleModalCancel();
+        props.handleCancel();
         setLoading(false);
       
 
@@ -227,6 +227,7 @@ else{
        }catch(err)
        {
          error("Invalid Credentials");
+         console.log(err);
          setLoading(false);
 
        }

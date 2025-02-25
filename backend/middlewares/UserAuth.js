@@ -6,9 +6,8 @@ import UserModel from '../models/UserModel.js';
 const UserAuth = async (req, res, next) => {
 
     try {
-        const { token } = req.headers;
-
-
+        const token  =  req.headers.authorization.split(" ")[1];
+        console.log(token)
         if (!token) {
             return next(new Error("User Not Found"));
         }
