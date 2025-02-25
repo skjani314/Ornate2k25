@@ -321,14 +321,16 @@ const MyEvents = async (req, res, next) => {
 
        
 
-        const result_solo = await RegisterModel.find({ user_id: id });
+        const result_solo = await RegisterModel.find({ user_id: id }).populate("event_id")
+        
+    
         const teams = await TeamModel.find({
             $or: [{ team_lead: id }, { members: id }]
         })
             .populate("event_id")
             .populate("team_lead", "name email")
             .populate("members", "name email");
-
+console.log(result_solo)
        
         res.json({solo:result_solo,team:teams});
        
