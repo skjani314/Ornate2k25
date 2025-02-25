@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import RegisterModel from "../models/RegisterModel.js";
 import UserModel from "../models/UserModel.js"
+import OrganizerModel from "../models/OrganizerModel.js";
 
 const UserLogin = async (req, res, next) => {
     try {
@@ -19,7 +20,35 @@ const UserLogin = async (req, res, next) => {
             const isMatch = await bcrypt.compare(password, user.password);
 
             if (isMatch) {
-                const accessToken = jwt.sign({ email }, process.env.KEY, { expiresIn: '7d' });
+                const accessToken = jwt.sign({ id: user._id }, process.env.KEY, { expiresIn: '7d' });
+
+
+                return res.status(200).json(accessToken);
+            } else {
+                return res.status(401).json({ message: "Password incorrect" });
+            }
+        }
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+const OLogin = async (req, res, next) => {
+    try {
+        const { email, password } = req.body;
+        console.log(email)
+
+        const user = await OrganizerModel.findOne({ email });
+
+        if (!user) {
+            next(new Error("User Not Found"));
+        } {
+
+            const isMatch = await bcrypt.compare(password, user.password);
+
+            if (isMatch) {
+                const accessToken = jwt.sign({ id: user._id }, process.env.KEY, { expiresIn: '7d' });
 
 
                 return res.status(200).json(accessToken);
@@ -209,7 +238,8 @@ const passChange = async (req, res, next) => {
 
 const UserRegister = async (req, res, next) => {
     try {
-        const { name, email, password, mobile, collage_id, branch, otp } = req.body;
+        const { name, email, password, mobile, branch, otp } = req.body;
+        const collage_id = email.split('@')[0];
         const user = await UserModel.findOne({ email });
 
         if (user) {
@@ -255,12 +285,26 @@ const Profile = async (req, res, next) => {
 
     try {
 
-        const { id } = req.params;
-
+        const { id } = req.id;
+        const { role } = req.body;
         const result = await UserModel.findById(id).select('-password');
 
         res.json(result);
 
+
+    }
+    catch (err) {
+        next(err);
+    }
+}
+
+const OProfile = async (req, res, next) => {
+
+    try {
+
+        const { id } = req.id;
+        const result = await OrganizerModel.findById(id).select('-password');
+        res.json(result);
     }
     catch (err) {
         next(err);
@@ -293,4 +337,4 @@ const MyEvents = async (req, res, next) => {
 }
 
 
-export { UserLogin, UserRegister, SendOtp, passChange, ForgetPassword, ForgetVerify, Profile, MyEvents };
+export { UserLogin, UserRegister, SendOtp, passChange, OProfile, OLogin, ForgetPassword, ForgetVerify, Profile, MyEvents };

@@ -5,12 +5,13 @@ import MyEvents from "./components/MyEvents/MyEvents"
 import Admin from "./components/Admin/Admin"
 import {message} from 'antd';
 import EventContext from "./context/EventContext"
+import { useState } from "react"
 
 const App = () => {
 
   const [messageApi, contextHolder] = message.useMessage();
 
-
+ const [user,setUser]=useState(null);
 
 
 
@@ -33,6 +34,8 @@ const data={
   success,
   error,
   contextHolder,
+  user,
+  setUser
 
 }
 

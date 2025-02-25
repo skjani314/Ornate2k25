@@ -24,6 +24,7 @@ const {user,setUser,success,error,contextHolder}=useContext(EventContext);
 const [forgetpass,setForgetPass]=useState({email:'',flag:false});
 const {otpform,setOtpform}=props;
 const navigate=useNavigate();
+const [role,setRole]=useState("student");
 
 
 
@@ -36,11 +37,9 @@ const onChange =async (text) =>
 try{ 
   
 setLoading(true);  
-const validation=await axios.post(process.env.REACT_APP_API_URL+'/verify-otp',{otp:text,email:FormData.email})
 
-   success("OTP Verified Successfully");
 
-  const user=await axios.post(process.env.REACT_APP_API_URL+'/register', {FormData,role:FormData.role}, { withCredentials: true })  
+  const user=await axios.post(import.meta.env.VITE_BACKEND_URL+'/user/auth/register', {...FormData,otp:text})  
   success("Account Created successfully");
   setFormData({name:'',email:'',password:'',cpassword:'',mobile:''})
   setLoading(false);
@@ -159,18 +158,12 @@ const handleLogData=(e)=>
 const handleRegSubmit = async (e) => {
     e.preventDefault();
        setLoading(true);
-    let role='';
-    document.getElementsByName('role').forEach(
-(each)=>{
-if(each.checked){role=each.value}
-}
-)
-    const cbox=document.getElementsByName('cbox')[0].checked;
-  if(ValData.name  && ValData.email && ValData.password && ValData.cpassword && ValData.mobile && cbox && role!=='')
+
+  if(ValData.name  && ValData.email && ValData.password && ValData.cpassword && ValData.mobile)
     {
-        setFormData((prev)=>({...prev,role}));
+        setFormData((prev)=>({...prev}));
 try{
-  const isOtpSent =await  axios.post(process.env.REACT_APP_API_URL+'/send-otp',{email:FormData.email},{withCredentials:true})
+  const isOtpSent =await  axios.post(import.meta.env.VITE_BACKEND_URL+'/user/auth/send-otp',{email:FormData.email})
   setLoading(false);
      setOtpform(true);
      setForgetPass(false);
@@ -198,44 +191,37 @@ try{
       e.preventDefault();
       setLoading(true);
        try{
-        console.log(LogData);
-       await axios.post(process.env.REACT_APP_API_URL+'/login',LogData, { withCredentials: true })
-    
+        
+if(role!=="organizer"){
+        const token = await axios.post(import.meta.env.VITE_BACKEND_URL+'/user/auth/login',LogData)
+        localStorage.setItem("accessToken", token);
+        const result= await axios.get(import.meta.env.VITE_BACKEND_URL+'/user/profile', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        setUser(result);
+}
+else{
+  const token=await axios.post(import.meta.env.VITE_BACKEND_URL+'/user/auth/ologin',LogData);
+  localStorage.setItem("accessToken", token);
+  const result= await axios.get(import.meta.env.VITE_BACKEND_URL+'/user/oprofile', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+  setUser({...result,role:"organizer"});
+}
+
         setLogdata({email:'',password:''});
         
-        const result= await axios.post(process.env.REACT_APP_API_URL+'/get-user',{},{withCredentials:true});
-        if(result.data.role=='supplier'){
-          const ser_pro_data=await axios.get(process.env.REACT_APP_API_URL+'/serviceproviders?id='+result.data._id);
-          setUser({...result.data,...ser_pro_data.data})
-         }
-         else if(result.data.role=='agent'){
-          const agent_data=await axios.get(process.env.REACT_APP_API_URL+'/agents?user_id='+result.data._id);
-          console.log(agent_data.data)
-            const agent_result = await axios.get(process.env.REACT_APP_API_URL+'/agent_serviceprovider?agent_id=' + result.data._id);
-                   setserProData([...agent_result.data]);
-          setUser({...result.data,...agent_data.data});
-         }
-         else{
-          setUser({...result.data})
-          console.log('not working')
-         }
-
-
-
-
-
+      
         props.handleModalCancel();
         setLoading(false);
-        setOtpform(false);
-        if(result.data.role=='supplier'){
-          navigate('/serviceproviders/'+result.data._id+'/dashboard');
-        }
-        else if(result.data.role=='agent'){
-          navigate('/agents/'+result.data._id+'/dashboard');
-        }
-        else if(result.data.role=='admin'){
-          navigate('/admins/'+result.data._id+'/dashboard');
-        }
+      
+
         success("Logged In successfully");
 
        }catch(err)
@@ -252,7 +238,7 @@ try{
   setLoading(true);
 
  try{
-const result=await axios.post(process.env.REACT_APP_API_URL+'/forget',{email:forgetpass.email})
+const result=await axios.post(import.meta.env.BACKEND_URL+'/forget',{email:forgetpass.email})
 success("Reset Link sent to Mail Successfully");
 setLoading(false);
 setForgetPass({email:'',flag:false});
@@ -275,24 +261,28 @@ props.handleModalCancel();
    {
     (!otpform)?
     <div className="fcontainer mt-4"> 
-        <div className='row mx-1'>
-       <div className="sign-up active col-6" id="sign-up-button" onClick={()=>{setFormFlag('reg')}}>
-           <p className="sign-up-header">Sign Up</p>
-       </div>
-      <div className="log-in col-6" id="log-in-button" onClick={()=>{setFormFlag('')}}>
-       <p className="log-in-header">Log In</p>
-      </div>
-      </div>
+       <div className="flex mx-1">
+  <div
+    className="sign-up active w-1/2 text-center cursor-pointer"
+    id="sign-up-button"
+    onClick={() => setFormFlag('reg')}
+  >
+    <p className="sign-up-header">Sign Up</p>
+  </div>
+  <div
+    className="log-in w-1/2 text-center cursor-pointer"
+    id="log-in-button"
+    onClick={() => setFormFlag('')}
+  >
+    <p className="log-in-header">Log In</p>
+  </div>
+</div>
+
     <form id="sign-up-form" onSubmit={handleRegSubmit} method='POST'>
        <div className="header">
         <h1>Sign Up for Free</h1>
        </div>
-       <div className='radio-buttons d-flex justify-content-around'>
-        <label className='mt-1'>I AM </label>
-        <label><input type="radio" name="role" value="customer" />{" "}User</label>
-        <label> <input type="radio" name="role" value="supplier" />{" "}Supplier</label>
-        <label><input type="radio" name="role" value="agent" />{" "}Agent</label>
-       </div>
+      
        <input className="first-name" name='name' type="text" placeholder="Enter Your Name*" required value={FormData.name} onChange={handleFormData}/>
        {!ValData.name?<p>First name should be greater than one letter and Have No numbers</p>:null}
        <input type="email" name='email' placeholder="Email Address*" required value={FormData.email} onChange={handleFormData}/>
@@ -319,6 +309,11 @@ props.handleModalCancel();
       <div className="header">
         <h1>Welcome back!</h1>
       </div>
+      <div className='radio-buttons d-flex justify-content-around'>
+        <label className='mt-1'>I AM </label>
+        <label><input type="radio" name="role" value="student" checked={role==="student"} onClick={(e)=>setRole(e.target.value)} />{" "}Student</label>
+        <label> <input type="radio" name="role" value="organizer" checked={role==="organizer"} onClick={(e)=>setRole(e.target.value)} />{" "}Organizer</label>
+       </div>
       <input className="email" name='email' type="email" placeholder="Email Address*" required value={LogData.email} onChange={handleLogData}/>
      <div style={{position:'relative'}}> <input  type={!psicon?'password':'text'} name='password' placeholder="Your password*" required value={LogData.password} onChange={handleLogData}/>{' '}{psicon?<FaEyeSlash className='passicon' onClick={()=>{setPsicon(!psicon);}} />:<FaEye className='passicon' onClick={()=>{setPsicon(!psicon)}} />}</div>
      

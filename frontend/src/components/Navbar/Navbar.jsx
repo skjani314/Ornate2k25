@@ -14,6 +14,14 @@ const Navbar = (props) => {
   const {fix}=props;
   const [isOpen, setIsOpen] = useState(false); 
   const [isModel,setModel]=useState(false);
+  const [otpform, setOtpform] = useState(false);
+
+
+  const handleCancel=()=>{
+    setModel(false);
+    setOtpform(false);
+  }
+
   return (
     <nav className={`bg-gradient-to-r from-indigo-500 to-indigo-400 p-3 w-full ${fix && 'fixed top-0 left-0 z-10'}`}>
       <div className="flex justify-between items-center max-w-7xl mx-auto">
@@ -80,8 +88,8 @@ const Navbar = (props) => {
         </div>
       )}
 
-      <Modal footer={null} onCancel={()=>setModel(false)} open={isModel}>
-       <LogIn/>
+      <Modal footer={null} onCancel={handleCancel} open={isModel}>
+       <LogIn otpform={otpform} setOtpform={setOtpform} handleCancel={handleCancel} />
       </Modal>
     </nav>
   );
