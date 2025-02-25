@@ -5,7 +5,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import './login.css';
 import axios from 'axios';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import EventContext from '../../context/EventContext';
 
 function LogIn(props) {
@@ -201,7 +201,7 @@ if(role!=="organizer"){
             "Content-Type": "application/json",
           },
         });
-        setUser(result);
+        setUser(result.data);
 }
 else{
   const token=await axios.post(import.meta.env.VITE_BACKEND_URL+'/user/auth/ologin',LogData);
@@ -212,7 +212,7 @@ else{
       "Content-Type": "application/json",
     },
   });
-  setUser({...result,role:"organizer"});
+  setUser({...result.data,role:"organizer"});
 }
 
         setLogdata({email:'',password:''});
@@ -223,6 +223,7 @@ else{
       
 
         success("Logged In successfully");
+        navigate('/admin');
 
        }catch(err)
        {

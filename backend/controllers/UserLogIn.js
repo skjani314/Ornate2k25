@@ -303,6 +303,7 @@ const OProfile = async (req, res, next) => {
     try {
 
         const { id } = req.id;
+        console.log(id);
         const result = await OrganizerModel.findById(id).select('-password');
         res.json(result);
     }

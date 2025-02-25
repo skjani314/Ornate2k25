@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { FaBars, FaTimes } from "react-icons/fa"; 
 import { Link } from "react-router-dom";
 import { Modal } from "antd";
 import LogIn from "./LogIn";
-
+import EventContext from "../../context/EventContext";
+import { useNavigate } from "react-router-dom";
 const navList = [
   { id: "HOME", displayText: "Home" },
   { id: "MY-ACCOUNT", displayText: "My Account" },
@@ -15,8 +16,8 @@ const Navbar = (props) => {
   const [isOpen, setIsOpen] = useState(false); 
   const [isModel,setModel]=useState(false);
   const [otpform, setOtpform] = useState(false);
-
-
+  const {user,accessToken,setAccessToken,setUser}=useContext(EventContext);  
+const navigate=useNavigate();
   const handleCancel=()=>{
     setModel(false);
     setOtpform(false);
@@ -52,9 +53,16 @@ const Navbar = (props) => {
          </NavLink>
         
           ))}
+{user==null?
           <button  onClick={()=>setModel(true)} className="hidden md:block bg-green-500 p-2 text-white rounded-xl w-[80px] hover:bg-white hover:text-green-600 font-bold">
           Login
-        </button>
+     </button>
+     :<button  onClick={()=>{setAccessToken(null);localStorage.removeItem('accessToken');setUser(null);navigate('/home');}} className="hidden md:block bg-green-500 p-2 text-white rounded-xl w-[80px] hover:bg-white hover:text-green-600 font-bold">
+     Logout
+</button>
+}
+
+
         </ul>       
        
   
@@ -83,7 +91,9 @@ const Navbar = (props) => {
             </NavLink>
           ))}
           <button  className="bg-green-500 p-2 text-white rounded-xl w-[80px] hover:bg-white hover:text-green-600 font-bold">
-            Login
+           {user!=null?
+            "Logout":"Login"
+}
           </button>
         </div>
       )}
