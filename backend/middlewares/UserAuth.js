@@ -13,8 +13,7 @@ const UserAuth = async (req, res, next) => {
             return next(new Error("User Not Found"));
         }
         else {
-
-
+      console.log(token);
             const token_decode = await jwt.verify(token, process.env.KEY);
             const {id}=token_decode;
             req.id = id;

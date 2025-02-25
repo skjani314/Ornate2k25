@@ -9,17 +9,58 @@ import { useEffect, useState } from "react"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios"
-import UnauthorizedPage from "./components/unauthorized/UnautherizedPage"
 
 
+const apiStatusConstants = {
+  initial: "INITIAL",
+  success: "SUCCESS",
+  failure: "FAILURE",
+  inProgress: "IN_PROGRESS",
+};
 
-const App = () => {
+
+const App = () => { 
 
   const [messageApi, contextHolder] = message.useMessage();
 
-  const [user, setUser] = useState(null);
-  const [accessToken, setAccessToken] = useState(null);
+ const [user,setUser]=useState(null);
+const [accessToken,setAccessToken]=useState(localStorage.getItem('accessToken')?localStorage.getItem('accessToken'):'');
 
+  const [apiStatus, setApiStatus] = useState(apiStatusConstants.initial);
+  const [eventDetails, setEventDetails] = useState([]);
+  const [soloEventDetails, setSoloEventDetails] = useState([]);
+  
+
+ 
+   
+   
+    const getEventDetails = async () => {
+      setApiStatus(apiStatusConstants.inProgress)
+      const token=localStorage.getItem('accessToken');
+
+      try {
+        const url = import.meta.env.VITE_BACKEND_URL + "/user/myevents/";
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          }
+        });
+        
+        setEventDetails(response.data.team);
+        setSoloEventDetails(response.data.solo);
+        setApiStatus(apiStatusConstants.success);
+  
+      } catch (err) {
+        console.error("Error fetching events:", err);
+        setApiStatus(apiStatusConstants.failure);
+      }
+    
+    };
+  
+    useEffect(() => {
+      getEventDetails();
+    }, [accessToken]);
 
 
   const success = (msg) => {
@@ -36,26 +77,30 @@ const App = () => {
   };
 
 
-  const data = {
-    success,
-    error,
-    contextHolder,
-    user,
-    setUser,
-    accessToken,
-    setAccessToken
+const data={
+  success,
+  error,
+  contextHolder,
+  user,
+  setUser,
+  accessToken,
+  setAccessToken,
+  apiStatus,
+  eventDetails,
+  soloEventDetails,
+ 
+}
 
-  }
+
+useEffect(()=>{
 
 
-  useEffect(() => {
+const getUser=async ()=>{
 
-
-    const getUser = async () => {
-
-      const token = localStorage.getItem('accessToken');
-      if (token != null) {
-        setAccessToken(token);
+const token=localStorage.getItem('accessToken');
+console.log(token);
+if(token!=null){
+  setAccessToken(token);
 
         const result = await axios.get(import.meta.env.VITE_BACKEND_URL + '/user/profile', {
           headers: {
