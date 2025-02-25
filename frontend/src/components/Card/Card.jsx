@@ -8,8 +8,9 @@ import { toast } from 'react-toastify';
 import EventContext from "../../context/EventContext";
 import TeamMemberList from "../MyEvents/TeamMemberList";
 
+
 const Card = ({ event, id, register, admin, getEvents, members, team_lead, team_code, team_name, team_id }) => {
-  const { user, accessToken } = useContext(EventContext);
+  const { user } = useContext(EventContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEdit, setEdit] = useState(false);
   const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
@@ -19,6 +20,8 @@ const Card = ({ event, id, register, admin, getEvents, members, team_lead, team_
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [myteam, setMyTeam] = useState(false);
+  const { success, error } = useContext(EventContext);
+  const accessToken = localStorage.getItem('accessToken');
   const handleUploadChange = ({ fileList }) => {
     setFileList(fileList.reverse());
   };
@@ -138,13 +141,19 @@ const Card = ({ event, id, register, admin, getEvents, members, team_lead, team_
       form_data.append('team_code', joinTeam.team_code);
       form_data.append('event_id', event._id);
       const url = import.meta.env.VITE_BACKEND_URL + '/register/team/join';
-      const result = await axios.post(url, form_data);
+      const result = await axios.post(url, form_data, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        }
+      });
 
       console.log(result);
       setJoinTeam({ open: false, team_code: "" })
-
+      success("Joined in team")
     }
     catch (err) {
+      error("Team filled")
       console.log(err);
 
     }
@@ -161,9 +170,15 @@ const Card = ({ event, id, register, admin, getEvents, members, team_lead, team_
       const url = import.meta.env.VITE_BACKEND_URL + '/register/team/remove_member/' + team_id;
       const form_data = new FormData();
       form_data.append('user_id', user_id);
-      const result = await axios.put(url, form_data);
-      console.log(result);
-
+      const result = await axios.put(url, form_data, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        }
+      });
+      success("Member removed successfully");
+      setMyTeam(false);
+      getEvents();
 
     }
     catch (err) {
@@ -171,24 +186,30 @@ const Card = ({ event, id, register, admin, getEvents, members, team_lead, team_
     }
 
   }
-const handleDeleteTeam=async ()=>{
+  const handleDeleteTeam = async () => {
 
 
-try{
+    try {
 
-  const url = import.meta.env.VITE_BACKEND_URL + '/register/team/delete/' + team_id;
+      const url = import.meta.env.VITE_BACKEND_URL + '/register/team/delete/' + team_id;
 
-const result=await axios.delete(url);
+      const result = await axios.delete(url, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        }
+      });
 
-console.log(result);
+      success("Team deleted successfully");
+      setIsTeamModalOpen(false);
+      getEvents();
+    }
+    catch (err) {
+      console.log(err);
+    }
 
-}
-catch(err){
-  console.log(err);
-}
 
-
-}
+  }
 
   const handleRegister = (e) => {
     e.stopPropagation();
@@ -210,7 +231,12 @@ catch(err){
     try {
 
       const url = import.meta.env.VITE_BACKEND_URL + "/events/remove/" + event._id;
-      const result = await axios.delete(url);
+      const result = await axios.delete(url, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        }
+      });
       console.log(result);
       getEvents();
 
@@ -246,7 +272,12 @@ catch(err){
 
       const url = import.meta.env.VITE_BACKEND_URL + "/events/update/" + event._id;
 
-      const result = await axios.put(url, form_Data);
+      const result = await axios.put(url, form_Data, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        }
+      });
       console.log(result);
       setEdit(false);
       form.resetFields();
@@ -257,7 +288,7 @@ catch(err){
     }
   };
 
-  console.log(event);
+  console.log(members);
   return (
     <>
       <div id={id}
@@ -504,21 +535,22 @@ catch(err){
               <p className="text-white text-lg">
                 <strong className="text-green-400">Team_lead:</strong> {team_lead && team_lead.name}
               </p>
-              <button
-                className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center space-x-2 border border-red-500 shadow-md transition-all"
-                onClick={handleDeleteTeam}
-              >
-                <FaTrash className="w-5 h-5" />
-                <span>Delete Team</span>
-              </button>
-
+              {user && team_lead && user._id == team_lead._id ?
+                <button
+                  className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center space-x-2 border border-red-500 shadow-md transition-all"
+                  onClick={handleDeleteTeam}
+                >
+                  <FaTrash className="w-5 h-5" />
+                  <span>Delete Team</span>
+                </button>
+                : null
+              }
               <h1 className="text-green-300 text-2xl font-bold text-center">
                 Team Members
               </h1>
               {
-                members && members.map((each) => (
-                  <TeamMemberList members={members} onDelete={onDelete} />
-                ))
+
+                <TeamMemberList team_lead={team_lead} members={members} onDelete={onDelete} />
               }
 
             </div>

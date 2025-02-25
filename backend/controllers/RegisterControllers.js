@@ -1,6 +1,7 @@
 import RegisterModel from "../models/RegisterModel.js";
 import TeamModel from "../models/TeamModel.js";
 import mongoose from "mongoose";
+import EventModel from "../models/EventModel.js";
 
 const SoloRegister = async (req, res, next) => {
     try {
@@ -30,9 +31,13 @@ const SoloUnregister = async (req, res, next) => {
     try {
 
         const { id } = req.params;
-        const result = await RegisterModel.deleteOne({ user_id: id });
+        if (id == req.id) {
+            const result = await RegisterModel.deleteOne({ user_id: id });
 
-        res.json(result);
+            res.json(result);
+        } else {
+            next(new Error("unauthorized"))
+        }
 
     }
     catch (err) {
@@ -78,14 +83,23 @@ const JoinTeam = async (req, res, next) => {
     try {
 
         const { user_id, team_code, event_id } = req.body;
-        const eventObj = new mongoose.Types.ObjectId(event_id);
-        const team = await TeamModel.findOne({ team_code: team_code, event_id: eventObj });
-        if (team != null) {
-            const result = await TeamModel.findByIdAndUpdate(team._id, { $addToSet: { members: user_id } }, { new: true });
-            res.json(result);
+
+        if (req.id != user_id) {
+            return next(new Error("Unauthorized"));
+
         }
         else {
-            next(new Error("No Team Found"));
+            const eventObj = new mongoose.Types.ObjectId(event_id);
+            const team = await TeamModel.findOne({ team_code: team_code, event_id: eventObj });
+            const event = await EventModel.findById(eventObj);
+            console.log(event);
+            if (team != null && team.members.length <= event.team_size) {
+                const result = await TeamModel.findByIdAndUpdate(team._id, { $addToSet: { members: user_id } }, { new: true });
+                res.json(result);
+            }
+            else {
+                next(new Error("No Team Found"));
+            }
         }
 
     }
@@ -102,10 +116,15 @@ const DeleteTeam = async (req, res, next) => {
     try {
 
         const { id } = req.params;
+        const team = await TeamModel.findById(id);
+        if (team.team_lead == req.id) {
+            const result = await TeamModel.findByIdAndDelete(id);
 
-        const result = await TeamModel.findByIdAndDelete(id);
-
-        res.json(result);
+            res.json(result);
+        }
+        else {
+            next(new Error("unauthorized"));
+        }
 
     }
     catch (err) {
@@ -122,14 +141,20 @@ const RemoveMember = async (req, res, next) => {
 
         const { user_id } = req.body;
         const { id } = req.params;
+        const team = await TeamModel.findById(id);
+        if (team.team_lead == req.id || user_id == req.id) {
 
 
-        const result = await TeamModel.findByIdAndUpdate(
-            id,
-            { $pull: { members: user_id } },
-            { new: true, runValidators: true })
 
-        res.json(result);
+            const result = await TeamModel.findByIdAndUpdate(
+                id,
+                { $pull: { members: user_id } },
+                { new: true, runValidators: true })
+
+            res.json(result);
+        } else {
+            next(new Error("unauthorized"));
+        }
     }
     catch (err) {
         next(err);

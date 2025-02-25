@@ -210,12 +210,13 @@ function LogIn(props) {
       else {
         const token = await axios.post(import.meta.env.VITE_BACKEND_URL + '/user/auth/ologin', LogData);
         localStorage.setItem("accessToken", token.data);
-        const result = await axios.get(import.meta.env.VITE_BACKEND_URL + '/user/oprofile', {
+        const result = await axios.get(import.meta.env.VITE_BACKEND_URL + '/user/profile', {
           headers: {
             Authorization: `Bearer ${token.data}`,
             "Content-Type": "application/json",
           },
         });
+
         setUser({ ...result.data, role: "organizer" });
         setAccessToken(token);
 

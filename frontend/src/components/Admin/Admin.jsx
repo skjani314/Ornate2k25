@@ -23,7 +23,8 @@ const Admin = () => {
   const [search_events, setSearchEvents] = useState([]);
   const [fileList, setFileList] = useState([]);
   const [announc_id, setAnnounceId] = useState("");
-  const { success,  contextHolder,  } = useContext(EventContext);
+  const { success, contextHolder } = useContext(EventContext);
+  const accessToken = localStorage.getItem('accessToken');
 
   const handleUploadChange = ({ fileList }) => {
     setFileList(fileList.reverse());
@@ -70,7 +71,12 @@ const Admin = () => {
       form_data.append('event_id', announc_id);
       form_data.append('subject', values.subject);
       form_data.append('des', values.des);
-      const result = await axios.post(url, form_data);
+      const result = await axios.post(url, form_data, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        }
+      });
 
       setIsAnnouncementOpen(false);
       setSearchEvents([]);
@@ -123,7 +129,12 @@ const Admin = () => {
 
       const url = import.meta.env.VITE_BACKEND_URL + "/events/add";
 
-      const result = await axios.post(url, form_Data);
+      const result = await axios.post(url, form_Data, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        }
+      });
       console.log(result);
       setIsModalOpen(false);
       form.resetFields();
@@ -197,7 +208,7 @@ const Admin = () => {
   return (
     <>
       {renderEventDetails()}
-{  contextHolder}
+      {contextHolder}
       <Modal
         title={<h2 className="text-xl font-bold text-indigo-700">Add Event</h2>}
         open={isModalOpen}

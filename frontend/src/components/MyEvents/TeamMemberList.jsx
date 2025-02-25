@@ -1,6 +1,11 @@
+import { useContext } from "react";
 import { FaTrash } from "react-icons/fa";
+import EventContext from "../../context/EventContext";
 
-const TeamMemberList = ({ members, onDelete }) => {
+const TeamMemberList = ({ members, onDelete, team_lead }) => {
+
+  const { user } = useContext(EventContext);
+
   return (
     <div className="space-y-3 mt-4">
       {members.length > 0 ? (
@@ -13,9 +18,12 @@ const TeamMemberList = ({ members, onDelete }) => {
               <p className="text-white font-semibold">{member.name}</p>
               <p className="text-gray-300 text-sm">{member.email}</p>
             </div>
-            <button onClick={() => onDelete(member._id)} className="text-red-500 hover:text-red-700">
-              <FaTrash size={18} />
-            </button>
+            {user._id == member._id || user._id == team_lead._id ?
+              <button onClick={() => onDelete(member._id)} className="text-red-500 hover:text-red-700">
+                <FaTrash size={18} />
+              </button>
+              : null
+            }
           </div>
         ))
       ) : (

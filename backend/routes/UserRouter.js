@@ -13,8 +13,7 @@ UserRouter.post('/auth/send-otp', SendOtp);
 UserRouter.post('/auth/forget/', ForgetPassword);
 UserRouter.post('/auth/verify', ForgetVerify);
 UserRouter.post('/auth/passchange', passChange);
-UserRouter.get('/profile', UserAuth, Profile);
-UserRouter.get('/oprofile', OAuth, OProfile);
+UserRouter.get('/profile',Profile);
 UserRouter.get('/myevents',UserAuth,MyEvents);
 
 

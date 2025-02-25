@@ -51,7 +51,7 @@ const OLogin = async (req, res, next) => {
             const isMatch = await bcrypt.compare(password, user.password);
 
             if (isMatch) {
-                const accessToken = jwt.sign({ id: user._id }, process.env.KEY, { expiresIn: '7d' });
+                const accessToken = jwt.sign({ id: user._id, role: 'organizer' }, process.env.KEY, { expiresIn: '7d' });
 
 
                 return res.status(200).json(accessToken);
@@ -286,19 +286,37 @@ const UserRegister = async (req, res, next) => {
 
 const Profile = async (req, res, next) => {
 
+
     try {
-
-        const { id } = req;
-        const { role } = req.body;
-        const result = await UserModel.findById(id).select('-password');
-
-        res.json(result);
+        const token = req.headers.authorization.split(" ")[1];
 
 
+        if (!token) {
+            return next(new Error("User Not Found"));
+        }
+        else {
+
+
+            const token_decode = await jwt.verify(token, process.env.KEY);
+            const { id, role } = token_decode;
+
+            if (role == null) {
+                const user = await UserModel.findById(id).select("-password");
+                res.json(user);
+            } else if (role == 'organizer') {
+                const user = await OrganizerModel.findById(id).select("-password");
+                res.json({ ...user, role: "organizer" });
+            }
+            else {
+                next(new Error("invalid Authorization token"))
+            }
+
+        }
+    } catch (error) {
+        next(error);
     }
-    catch (err) {
-        next(err);
-    }
+
+
 }
 
 const OProfile = async (req, res, next) => {
