@@ -11,6 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios"
 
 
+
 const App = () => {
 
   const [messageApi, contextHolder] = message.useMessage();
@@ -82,6 +83,7 @@ getUser();
         <Route exact path="/home" element={<Events/>}/>
         <Route exact path="/my-account" element={<MyEvents/>}/>
         <Route exact path="/admin" element={<Admin/>}/>
+       
       </Routes>
     </div>
     </EventContext.Provider>

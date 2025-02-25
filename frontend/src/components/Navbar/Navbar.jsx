@@ -46,7 +46,7 @@ const navigate=useNavigate();
            key={each.id}
            to={`/${each.id.toLowerCase()}`}
            className=
-             'text-white font-semibold'
+             {`text-white font-semibold`}
          >
            {each.displayText}
            <hr className='border-none outline-none h-0.5 w-4/5 bg-white m-auto hidden'/>

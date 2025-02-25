@@ -3,6 +3,8 @@ import axios from "axios";
 import Card from "../Card/Card";
 import { ClipLoader } from "react-spinners";
 import EventContext from "../../context/EventContext";
+import { toast } from "react-toastify";
+
 
 
 const apiStatusConstants = {
@@ -13,7 +15,7 @@ const apiStatusConstants = {
 };
 
 const MyEvents = () => {
-  const {accessToken}=useContext(EventContext)
+  const accessToken=localStorage.getItem('accessToken');
 
   const [apiStatus, setApiStatus] = useState(apiStatusConstants.initial);
   const [eventDetails, setEventDetails] = useState([]);
@@ -26,12 +28,26 @@ const MyEvents = () => {
     branch: "CSE",
   });
 
+  
+ 
+  const renderLoggedOutView = () => (
+    <div className="flex flex-col items-center justify-center min-h-screen text-center">
+      <h1 className="text-2xl font-bold text-red-600">You're Not Logged In!</h1>
+      <p className="text-lg text-gray-700 mt-2">
+        Please log in to view your events.
+      </p>
+      
+    </div>
+  );
+
   const getEventDetails = async () => {
-   
-    setApiStatus(apiStatusConstants.inProgress);
-    if(accessToken===null){
+    setApiStatus(apiStatusConstants.inProgress)
+    if(!accessToken){
+     
+      toast.info("Please login to view events");
       return;
     }
+    else{
     try {
       const url = import.meta.env.VITE_BACKEND_URL + "/user/myevents/";
       const response = await axios.get(url,{headers:{
@@ -47,11 +63,12 @@ const MyEvents = () => {
       console.error("Error fetching events:", err);
       setApiStatus(apiStatusConstants.failure);
     }
+  }
   };
 
   useEffect(() => {
     getEventDetails();
-  }, []);
+  }, [accessToken]);
 
   const renderFailureView = () => (
     <div className="flex flex-col items-center justify-center min-h-screen text-center text-red-500">
@@ -65,6 +82,8 @@ const MyEvents = () => {
       </p>
     </div>
   );
+
+  
 
   const renderLoadingView = () => (
     <div className="flex justify-center items-center min-h-screen" data-testid="loader">
@@ -128,6 +147,9 @@ const MyEvents = () => {
   };
 
   const renderEventDetails = () => {
+    if(!accessToken){
+      return renderLoggedOutView();
+    }
     switch (apiStatus) {
       case apiStatusConstants.success:
         return renderEventsDetailsView();
