@@ -15,17 +15,32 @@ const Admin = () => {
   const [apiStatus, setApiStatus] = useState(apiStatusConstants.initial);
   const [events, setEvents] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [form] = Form.useForm(); // Initializing the form instance
+  const [form] = Form.useForm(); 
+  const [isAnnouncementOpen,setIsAnnouncementOpen]=useState(false);
 
   const showModal = () => {
     setIsModalOpen(true);
   };
 
+  const showAnnouncement=()=>{
+    setIsAnnouncementOpen(true);
+  }
+
   const handleCancel = (e) => {
     e.stopPropagation();
     setIsModalOpen(false);
-    form.resetFields(); // Reset form fields when closing the modal
+    form.resetFields(); 
   };
+
+  const handleCancelAnnouncement = (e) => {
+    e.stopPropagation();
+    setIsAnnouncementOpen(false);
+    form.resetFields(); 
+  };
+
+  const handleSubmitAnnouncement=()=>{
+
+  }
 
   const getEvents = async () => {
     setApiStatus(apiStatusConstants.inProgress);
@@ -51,7 +66,7 @@ const Admin = () => {
       await axios.post(url, values);
       setIsModalOpen(false);
       form.resetFields();
-      getEvents(); // Refresh event list
+      getEvents(); 
     } catch (error) {
       console.error("Error submitting event:", error);
     }
@@ -89,7 +104,9 @@ const Admin = () => {
           >
             Add
           </button>
-          <button className="text-lg text-white border w-2/3 px-4 rounded-xl hover:bg-primary-800 hover:border-none">
+          <button className="text-lg text-white border w-2/3 px-4 rounded-xl hover:bg-primary-800 hover:border-none"
+           onClick={showAnnouncement}
+          >
             Announcement
           </button>
         </div>
@@ -188,6 +205,42 @@ const Admin = () => {
           >
             <Input type="number" placeholder="Enter team size" />
           </Form.Item>
+
+          <Form.Item className="flex justify-end">
+            <Button type="primary" htmlType="submit">
+              Submit
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <Modal
+        title={<h2 className="text-xl font-bold text-indigo-700">Make Announcement</h2>}
+        open={isAnnouncementOpen}
+        footer={null}
+        onCancel={handleCancelAnnouncement}
+        onClick={(e) => e.stopPropagation()}
+        centered
+      >
+        <Form form={form} layout="vertical" onFinish={handleSubmitAnnouncement}>
+          <Form.Item
+            label="Event Name"
+            name="name"
+            rules={[{ required: true, message: "Event name is required" }]}
+          >
+            <Input placeholder="Enter event name" />
+          </Form.Item>
+
+          <Form.Item label="Subject" name="subject">
+          <Input.TextArea rows={3} placeholder="Enter subject" />
+          </Form.Item>
+
+
+          <Form.Item label="Description" name="des">
+            <Input.TextArea rows={3} placeholder="Enter description" />
+          </Form.Item>
+
+         
 
           <Form.Item className="flex justify-end">
             <Button type="primary" htmlType="submit">
