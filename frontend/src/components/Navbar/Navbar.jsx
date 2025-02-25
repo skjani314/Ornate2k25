@@ -25,7 +25,7 @@ const navigate=useNavigate();
 
   return (
     <nav className={`bg-gradient-to-r from-indigo-500 to-indigo-400 p-3 w-full ${fix && 'fixed top-0 left-0 z-10'}`}>
-      <div className="flex justify-between items-center max-w-7xl mx-auto">
+      <div className="flex justify-between items-center w-full mx-auto">
      
         <div className="flex items-center">
          <Link to="/home">

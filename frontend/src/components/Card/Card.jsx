@@ -102,7 +102,7 @@ const Card = ({ event, id, register, admin, getEvents }) => {
     try {
       const response = await axios.post(
         import.meta.env.VITE_BACKEND_URL + '/register/soloregister/',
-        { event_id: id },
+        { event_id: event._id },
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,

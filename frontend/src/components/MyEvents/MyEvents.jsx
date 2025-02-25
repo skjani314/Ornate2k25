@@ -29,7 +29,7 @@ const MyEvents = () => {
   const getEventDetails = async () => {
    
     setApiStatus(apiStatusConstants.inProgress);
-    if(!accessToken){
+    if(accessToken===null){
       return;
     }
     try {
@@ -38,10 +38,11 @@ const MyEvents = () => {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       }});
+      console.log(response)
       setEventDetails(response.data.team);
       setSoloEventDetails(response.data.solo);
       setApiStatus(apiStatusConstants.success);
-      console.log(soloEventDetails)
+      
     } catch (err) {
       console.error("Error fetching events:", err);
       setApiStatus(apiStatusConstants.failure);
@@ -50,7 +51,7 @@ const MyEvents = () => {
 
   useEffect(() => {
     getEventDetails();
-  }, [accessToken]);
+  }, []);
 
   const renderFailureView = () => (
     <div className="flex flex-col items-center justify-center min-h-screen text-center text-red-500">
@@ -103,12 +104,25 @@ const MyEvents = () => {
           <h1 className="text-3xl font-bold text-green-300 shadow-lg">My Events</h1>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-10">
+
+        <div className="mt-6">
+        <h1 className="text-blue-800 text-3xl font-bold">Team</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-4">
           {eventDetails.map((event, index) => (
             <Card key={index} id={index} event={event.event_id} />
           ))}
-          
         </div>
+        </div>
+
+        <div className="mt-6">
+        <h1  className="text-blue-800 text-3xl font-bold">Solo</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-4">
+        {soloEventDetails.map((event,index)=>(
+            <Card key={index} id={index} event={event.event_id} />
+          ))}
+        </div>
+        </div>
+        
       </div>
     );
   };
