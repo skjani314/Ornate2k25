@@ -16,7 +16,6 @@ const apiStatusConstants = {
 
 const MyEvents = () => {
   const accessToken=localStorage.getItem('accessToken');
-  const { accessToken } = useContext(EventContext)
 
   const [apiStatus, setApiStatus] = useState(apiStatusConstants.initial);
   const [eventDetails, setEventDetails] = useState([]);
@@ -44,12 +43,8 @@ const MyEvents = () => {
   const getEventDetails = async () => {
     setApiStatus(apiStatusConstants.inProgress)
     if(!accessToken){
-     
       toast.info("Please login to view events");
-
-    setApiStatus(apiStatusConstants.inProgress);
-    if (accessToken === null) {
-      return;
+      return ;
     }
     else{
     try {
