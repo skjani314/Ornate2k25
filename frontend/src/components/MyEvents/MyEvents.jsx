@@ -16,10 +16,11 @@ const apiStatusConstants = {
 
 const MyEvents = () => {
   const accessToken=localStorage.getItem('accessToken');
+  const { accessToken } = useContext(EventContext)
 
   const [apiStatus, setApiStatus] = useState(apiStatusConstants.initial);
   const [eventDetails, setEventDetails] = useState([]);
-  const [soloEventDetails,setSoloEventDetails]=useState([]);
+  const [soloEventDetails, setSoloEventDetails] = useState([]);
   const [profileDetails, setProfileDetails] = useState({
     name: "John Doe",
     email: "johndoe@example.com",
@@ -45,20 +46,25 @@ const MyEvents = () => {
     if(!accessToken){
      
       toast.info("Please login to view events");
+
+    setApiStatus(apiStatusConstants.inProgress);
+    if (accessToken === null) {
       return;
     }
     else{
     try {
       const url = import.meta.env.VITE_BACKEND_URL + "/user/myevents/";
-      const response = await axios.get(url,{headers:{
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      }});
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        }
+      });
       console.log(response)
       setEventDetails(response.data.team);
       setSoloEventDetails(response.data.solo);
       setApiStatus(apiStatusConstants.success);
-      
+
     } catch (err) {
       console.error("Error fetching events:", err);
       setApiStatus(apiStatusConstants.failure);
@@ -125,23 +131,28 @@ const MyEvents = () => {
 
 
         <div className="mt-6">
-        <h1 className="text-blue-800 text-3xl font-bold">Team</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-4">
-          {eventDetails.map((event, index) => (
-            <Card key={index} id={index} event={event.event_id} />
-          ))}
-        </div>
+          <h1 className="text-blue-800 text-3xl font-bold">Team</h1>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-4">
+            {eventDetails.map((event, index) => (
+              <Card key={index} id={index} event={event.event_id} members={event.members} team_code={event.team_code}
+
+                team_lead={event.team_lead}
+                team_name={event.team_name}
+                team_id={event._id}
+              />
+            ))}
+          </div>
         </div>
 
         <div className="mt-6">
-        <h1  className="text-blue-800 text-3xl font-bold">Solo</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-4">
-        {soloEventDetails.map((event,index)=>(
-            <Card key={index} id={index} event={event.event_id} />
-          ))}
+          <h1 className="text-blue-800 text-3xl font-bold">Solo</h1>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-4">
+            {soloEventDetails.map((event, index) => (
+              <Card key={index} id={index} event={event.event_id} />
+            ))}
+          </div>
         </div>
-        </div>
-        
+
       </div>
     );
   };

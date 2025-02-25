@@ -18,7 +18,7 @@ const UserLogin = async (req, res, next) => {
             next(new Error("User Not Found"));
             return;
         }
-         {
+        {
 
             const isMatch = await bcrypt.compare(password, user.password);
 
@@ -287,7 +287,7 @@ const UserRegister = async (req, res, next) => {
 const Profile = async (req, res, next) => {
 
     try {
-        
+
         const { id } = req;
         const { role } = req.body;
         const result = await UserModel.findById(id).select('-password');
@@ -317,23 +317,23 @@ const OProfile = async (req, res, next) => {
 
 const MyEvents = async (req, res, next) => {
     try {
-        const id = req.id; 
+        const id = req.id;
 
-       
+
 
         const result_solo = await RegisterModel.find({ user_id: id }).populate("event_id")
-        
-    
+
+
         const teams = await TeamModel.find({
             $or: [{ team_lead: id }, { members: id }]
         })
             .populate("event_id")
             .populate("team_lead", "name email")
             .populate("members", "name email");
-console.log(result_solo)
-       
-        res.json({solo:result_solo,team:teams});
-       
+        console.log(teams);
+
+        res.json({ solo: result_solo, team: teams });
+
     } catch (err) {
         next(err);
     }
