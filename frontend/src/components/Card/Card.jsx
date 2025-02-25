@@ -9,7 +9,7 @@ import EventContext from "../../context/EventContext";
 import TeamMemberList from "../MyEvents/TeamMemberList";
 
 
-const Card = ({ event, id, register, admin, getEvents, members, team_lead, team_code, team_name, team_id }) => {
+const Card = ({ event, id, register, admin, members, team_lead, team_code, team_name, team_id }) => {
   const { user } = useContext(EventContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEdit, setEdit] = useState(false);
@@ -20,7 +20,7 @@ const Card = ({ event, id, register, admin, getEvents, members, team_lead, team_
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [myteam, setMyTeam] = useState(false);
-  const { success, error } = useContext(EventContext);
+  const { success, error, getEvents } = useContext(EventContext);
   const accessToken = localStorage.getItem('accessToken');
   const handleUploadChange = ({ fileList }) => {
     setFileList(fileList.reverse());
