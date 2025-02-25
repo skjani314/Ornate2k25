@@ -11,14 +11,56 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios"
 
 
+const apiStatusConstants = {
+  initial: "INITIAL",
+  success: "SUCCESS",
+  failure: "FAILURE",
+  inProgress: "IN_PROGRESS",
+};
 
-const App = () => {
+
+const App = () => { 
 
   const [messageApi, contextHolder] = message.useMessage();
 
  const [user,setUser]=useState(null);
-const [accessToken,setAccessToken]=useState(null);
+const [accessToken,setAccessToken]=useState(localStorage.getItem('accessToken')?localStorage.getItem('accessToken'):'');
 
+  const [apiStatus, setApiStatus] = useState(apiStatusConstants.initial);
+  const [eventDetails, setEventDetails] = useState([]);
+  const [soloEventDetails, setSoloEventDetails] = useState([]);
+  
+
+ 
+   
+   
+    const getEventDetails = async () => {
+      setApiStatus(apiStatusConstants.inProgress)
+      const token=localStorage.getItem('accessToken');
+
+      try {
+        const url = import.meta.env.VITE_BACKEND_URL + "/user/myevents/";
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          }
+        });
+        
+        setEventDetails(response.data.team);
+        setSoloEventDetails(response.data.solo);
+        setApiStatus(apiStatusConstants.success);
+  
+      } catch (err) {
+        console.error("Error fetching events:", err);
+        setApiStatus(apiStatusConstants.failure);
+      }
+    
+    };
+  
+    useEffect(() => {
+      getEventDetails();
+    }, [accessToken]);
 
 
 const success = (msg) => {
@@ -42,8 +84,11 @@ const data={
   user,
   setUser,
   accessToken,
-  setAccessToken
-
+  setAccessToken,
+  apiStatus,
+  eventDetails,
+  soloEventDetails,
+ 
 }
 
 

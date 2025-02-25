@@ -1,10 +1,10 @@
-import { useState, useEffect, useContext } from "react";
+import { useContext } from "react";
 import axios from "axios";
 import Card from "../Card/Card";
 import { ClipLoader } from "react-spinners";
 import EventContext from "../../context/EventContext";
 import { toast } from "react-toastify";
-
+ 
 
 
 const apiStatusConstants = {
@@ -15,34 +15,9 @@ const apiStatusConstants = {
 };
 
 const MyEvents = () => {
-  const accessToken=localStorage.getItem('accessToken');
 
-  const [apiStatus, setApiStatus] = useState(apiStatusConstants.initial);
-  const [eventDetails, setEventDetails] = useState([]);
-  const [soloEventDetails, setSoloEventDetails] = useState([]);
-  const [profileDetails, setProfileDetails] = useState({});
-
-
-  const getProfileDetails=async()=>{
-   try{
-    const url=import.meta.env.VITE_BACKEND_URL+'/user/profile/';
-    const response=await axios.get(url,{headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-    }})
-    if(response.status>=200 && response.status<500){
-      setProfileDetails(response.data)
-    }
-   }
-   catch(error){
-    console.log(error)
-   }
-  }
-
-  useEffect(()=>{
-    getProfileDetails();
-  },[])  
- 
+  const {apiStatus,eventDetails,soloEventDetails,user,accessToken}=useContext(EventContext)
+  
   const renderLoggedOutView = () => (
     <div className="flex flex-col items-center justify-center min-h-screen text-center">
       <h1 className="text-2xl font-bold text-red-600">You're Not Logged In!</h1>
@@ -53,36 +28,7 @@ const MyEvents = () => {
     </div>
   );
 
-  const getEventDetails = async () => {
-    setApiStatus(apiStatusConstants.inProgress)
-    if(!accessToken){
-      toast.info("Please login to view events");
-      return ;
-    }
-    else{
-    try {
-      const url = import.meta.env.VITE_BACKEND_URL + "/user/myevents/";
-      const response = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        }
-      });
-      
-      setEventDetails(response.data.team);
-      setSoloEventDetails(response.data.solo);
-      setApiStatus(apiStatusConstants.success);
-
-    } catch (err) {
-      console.error("Error fetching events:", err);
-      setApiStatus(apiStatusConstants.failure);
-    }
-  }
-  };
-
-  useEffect(() => {
-    getEventDetails();
-  }, [accessToken]);
+  
 
   const renderFailureView = () => (
     <div className="flex flex-col items-center justify-center min-h-screen text-center text-red-500">
@@ -116,16 +62,16 @@ const MyEvents = () => {
           </div>
           <div className="space-y-2">
             <p className="text-white text-lg">
-              <strong className="text-green-400">Name:</strong> {profileDetails.name}
+              <strong className="text-green-400">Name:</strong> {user.name}
             </p>
             <p className="text-white text-lg">
-              <strong className="text-green-400">Email:</strong> {profileDetails.email}
+              <strong className="text-green-400">Email:</strong> {user.email}
             </p>
             <p className="text-white text-lg">
-              <strong className="text-green-400">Phone:</strong> {profileDetails.mobile}
+              <strong className="text-green-400">Phone:</strong> {user.mobile}
             </p>
             <p className="text-white text-lg">
-              <strong className="text-green-400">Id:</strong> {profileDetails.collage_id}
+              <strong className="text-green-400">Id:</strong> {user.collage_id}
             </p>
           </div>
         </div>
