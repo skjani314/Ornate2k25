@@ -2,7 +2,7 @@ import EventModel from "../models/EventModel.js";
 import RegisterModel from "../models/RegisterModel.js";
 import TeamModel from "../models/TeamModel.js";
 import mongoose from "mongoose";
-
+import nodemailer from 'nodemailer';
 import cloudinary from 'cloudinary';
 
 
@@ -130,10 +130,9 @@ const Announce = async (req, res, next) => {
 
 
 
+        if (event.team_size == '1') {
 
-        if (event.team_size > 1) {
-
-            const soloRegistrations = await RegisterModel.find({ event_id: eventId })
+            const soloRegistrations = await RegisterModel.find({ event_id: event_id })
                 .populate("user_id", "email");
 
             const soloEmails = soloRegistrations.map(reg => reg.user_id.email);
@@ -161,7 +160,8 @@ const Announce = async (req, res, next) => {
 
         }
         else {
-            const teamRegistrations = await TeamModel.find({ event_id: eventId })
+
+            const teamRegistrations = await TeamModel.find({ event_id: event_id })
                 .populate("team_lead", "email")
                 .populate("members", "email");
 
@@ -170,7 +170,6 @@ const Announce = async (req, res, next) => {
                 teamEmails.push(team.team_lead.email);
                 team.members.forEach(member => teamEmails.push(member.email));
             });
-
 
 
             const mailOptions = {
@@ -194,10 +193,9 @@ const Announce = async (req, res, next) => {
                 }
             });
 
-
-
         }
 
+        res.json("sent");
 
     }
     catch (err) {
@@ -207,4 +205,4 @@ const Announce = async (req, res, next) => {
 }
 
 
-export { AddEvent, GetEvents, DeleteEvent, UpdateEvent }
+export { AddEvent, GetEvents, DeleteEvent, UpdateEvent, Announce }

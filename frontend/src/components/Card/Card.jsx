@@ -15,7 +15,7 @@ const Card = ({ event, id, register, admin, getEvents }) => {
   const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
   const [newTeam, setNewTeam] = useState(false);
   const [teamName, setTeamName] = useState("");
-
+  const [joinTeam, setJoinTeam] = useState({ open: false, team_code: "" });
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const handleUploadChange = ({ fileList }) => {
@@ -98,7 +98,7 @@ const Card = ({ event, id, register, admin, getEvents }) => {
   };
 
   const individualRegister = async () => {
-    
+
     try {
       const response = await axios.post(
         import.meta.env.VITE_BACKEND_URL + '/register/soloregister/',
@@ -120,6 +120,33 @@ const Card = ({ event, id, register, admin, getEvents }) => {
       toast.error(error.response?.data?.error || 'An error occurred');
     }
   };
+
+
+  const handleJoinTeam = async (e) => {
+
+    e.preventDefault();
+
+    try {
+
+      const form_data = new FormData();
+
+      form_data.append('user_id', user._id);
+      form_data.append('team_code', joinTeam.team_code);
+      form_data.append('event_id', event._id);
+      const url = import.meta.env.VITE_BACKEND_URL + '/register/team/join';
+      const result = await axios.post(url, form_data);
+
+      console.log(result);
+setJoinTeam({ open: false, team_code: "" })
+
+    }
+    catch (err) {
+      console.log(err);
+
+    }
+
+
+  }
 
   const teamRegister = () => {
     setIsTeamModalOpen(true);
@@ -369,7 +396,7 @@ const Card = ({ event, id, register, admin, getEvents }) => {
           >
             Create Team
           </button>
-          <button className="w-40 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105">
+          <button onClick={() => { setIsTeamModalOpen(false); setJoinTeam(prev => ({ ...prev, open: true })) }} className="w-40 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105">
             Join Team
           </button>
         </div>
@@ -397,6 +424,27 @@ const Card = ({ event, id, register, admin, getEvents }) => {
               className="w-40 mt-4 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105"
             >
               Confirm
+            </button>
+          </form>
+        </div>
+      </Modal>
+
+      <Modal footer={null} open={joinTeam.open} onCancel={() => { setJoinTeam({ open: false, team_code: "" }) }}>
+        <div className="p-6 flex flex-col items-center space-y-4">
+          <h2 className="text-lg font-bold text-indigo-700">Join In a team</h2>
+          <form onSubmit={handleJoinTeam} className="w-full flex flex-col items-center">
+            <label className="text-gray-700 font-medium">Enter Team Code</label>
+            <input
+              type="text"
+              value={joinTeam.team_code}
+              onChange={(e) => setJoinTeam(prev => ({ ...prev, team_code: e.target.value }))}
+              className="w-64 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+            <button
+              type="submit"
+              className="w-40 mt-4 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105"
+            >
+              Join Team
             </button>
           </form>
         </div>
