@@ -6,8 +6,7 @@ import OrganizerModel from '../models/OrganizerModel.js';
 const OAuth = async (req, res, next) => {
 
     try {
-        const { token } = req.headers;
-
+        const token = req.headers.authorization.split(" ")[1];
 
         if (!token) {
             return next(new Error("User Not Found"));

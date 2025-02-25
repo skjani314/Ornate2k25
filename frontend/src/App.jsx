@@ -5,14 +5,14 @@ import MyEvents from "./components/MyEvents/MyEvents"
 import Admin from "./components/Admin/Admin"
 import {message} from 'antd';
 import EventContext from "./context/EventContext"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 const App = () => {
 
   const [messageApi, contextHolder] = message.useMessage();
 
  const [user,setUser]=useState(null);
-
+const [accessToken,setAccessToken]=useState(null);
 
 
 
@@ -35,9 +35,38 @@ const data={
   error,
   contextHolder,
   user,
-  setUser
+  setUser,
+  accessToken,
+  setAccessToken
 
 }
+
+
+useEffect(()=>{
+
+
+const getUser=async ()=>{
+
+const token=localStorage.getItem('accessToken');
+console.log(token);
+if(token!=null){
+  setAccessToken(token);
+
+  const result= await axios.get(import.meta.env.VITE_BACKEND_URL+'/user/profile', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+  setUser(result.data);
+}
+
+}
+
+getUser();
+
+},[])
+
 
   return (
     <EventContext.Provider value={data}>
