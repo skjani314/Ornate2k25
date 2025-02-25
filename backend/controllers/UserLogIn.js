@@ -316,11 +316,11 @@ const MyEvents = async (req, res, next) => {
 
     try {
 
-        const { user_id } = req.params;
+        const { user_id } = req.id;
 
         const result_solo = await RegisterModel.find({ user_id });
         const teams = await TeamModel.find({
-            $or: [{ team_lead: userId }, { members: userId }]
+            $or: [{ team_lead: user_Id }, { members: userId }]
         })
             .populate("event_id")
             .populate("team_lead", "name email")
