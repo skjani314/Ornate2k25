@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Card from "../Card/Card";
 import { ClipLoader } from "react-spinners";
-import { Modal, Form, Input, DatePicker, TimePicker, Button } from "antd";
+import { Modal, Form, Input, DatePicker, TimePicker, Button, Upload } from "antd";
+import { FaUpload } from 'react-icons/fa';
+
 
 const apiStatusConstants = {
   initial: "INITIAL",
@@ -15,30 +17,34 @@ const Admin = () => {
   const [apiStatus, setApiStatus] = useState(apiStatusConstants.initial);
   const [events, setEvents] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [form] = Form.useForm(); 
-  const [isAnnouncementOpen,setIsAnnouncementOpen]=useState(false);
+  const [form] = Form.useForm();
+  const [isAnnouncementOpen, setIsAnnouncementOpen] = useState(false);
+  const [fileList, setFileList] = useState([]);
+  const handleUploadChange = ({ fileList }) => {
+    setFileList(fileList.reverse());
+  };
 
   const showModal = () => {
     setIsModalOpen(true);
   };
 
-  const showAnnouncement=()=>{
+  const showAnnouncement = () => {
     setIsAnnouncementOpen(true);
   }
 
   const handleCancel = (e) => {
     e.stopPropagation();
     setIsModalOpen(false);
-    form.resetFields(); 
+    form.resetFields();
   };
 
   const handleCancelAnnouncement = (e) => {
     e.stopPropagation();
     setIsAnnouncementOpen(false);
-    form.resetFields(); 
+    form.resetFields();
   };
 
-  const handleSubmitAnnouncement=()=>{
+  const handleSubmitAnnouncement = () => {
 
   }
 
@@ -61,12 +67,31 @@ const Admin = () => {
 
   const handleSubmit = async (values) => {
     try {
+      values.date = new Date(values.date.toISOString());
+      values.deadline = new Date(values.deadline.toISOString());
       console.log("Form Values:", values);
-      const url = import.meta.env.VITE_BACKEND_URL + "/events/";
-      await axios.post(url, values);
+      const form_Data = new FormData();
+      fileList.forEach(file => {
+        form_Data.append('img', file.originFileObj);
+      });
+      form_Data.append('name', values.name);
+      form_Data.append('date', values.date);
+      form_Data.append('deadline', values.deadline);
+      form_Data.append('location', values.location);
+      form_Data.append('from_time', values.from_time);
+      form_Data.append('to_time', values.to_time);
+      form_Data.append('des', values.des);
+      form_Data.append('team_size', values.team_size);
+
+
+
+      const url = import.meta.env.VITE_BACKEND_URL + "/events/add";
+
+      const result = await axios.post(url, form_Data);
+      console.log(result);
       setIsModalOpen(false);
       form.resetFields();
-      getEvents(); 
+      getEvents();
     } catch (error) {
       console.error("Error submitting event:", error);
     }
@@ -105,7 +130,7 @@ const Admin = () => {
             Add
           </button>
           <button className="text-lg text-white border w-2/3 px-4 rounded-xl hover:bg-primary-800 hover:border-none"
-           onClick={showAnnouncement}
+            onClick={showAnnouncement}
           >
             Announcement
           </button>
@@ -114,7 +139,7 @@ const Admin = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-10">
         {events.map((event, index) => (
-          <Card event={event} key={index} id={index} admin />
+          <Card event={event} key={index} id={index} getEvents={getEvents} admin />
         ))}
       </div>
     </div>
@@ -164,7 +189,7 @@ const Admin = () => {
 
           <Form.Item
             label="Deadline"
-            name="deadLine"
+            name="deadline"
             rules={[{ required: true, message: "Deadline is required" }]}
           >
             <DatePicker className="w-full" />
@@ -183,7 +208,7 @@ const Admin = () => {
             name="from_time"
             rules={[{ required: true, message: "Start time is required" }]}
           >
-            <TimePicker className="w-full" format="HH:mm" />
+            <Input placeholder="From" />
           </Form.Item>
 
           <Form.Item
@@ -191,7 +216,7 @@ const Admin = () => {
             name="to_time"
             rules={[{ required: true, message: "End time is required" }]}
           >
-            <TimePicker className="w-full" format="HH:mm" />
+            <Input placeholder="To" />
           </Form.Item>
 
           <Form.Item label="Description" name="des">
@@ -205,13 +230,22 @@ const Admin = () => {
           >
             <Input type="number" placeholder="Enter team size" />
           </Form.Item>
-
+          <Upload
+            multiple
+            listType="picture"
+            beforeUpload={() => false}
+            fileList={fileList}
+            onChange={handleUploadChange}
+          >  <Button className='mt-1 p-4'><FaUpload /> Upload</Button>
+          </Upload>
           <Form.Item className="flex justify-end">
             <Button type="primary" htmlType="submit">
               Submit
             </Button>
           </Form.Item>
+
         </Form>
+
       </Modal>
 
       <Modal
@@ -232,7 +266,7 @@ const Admin = () => {
           </Form.Item>
 
           <Form.Item label="Subject" name="subject">
-          <Input.TextArea rows={3} placeholder="Enter subject" />
+            <Input.TextArea rows={3} placeholder="Enter subject" />
           </Form.Item>
 
 
@@ -240,7 +274,7 @@ const Admin = () => {
             <Input.TextArea rows={3} placeholder="Enter description" />
           </Form.Item>
 
-         
+
 
           <Form.Item className="flex justify-end">
             <Button type="primary" htmlType="submit">
