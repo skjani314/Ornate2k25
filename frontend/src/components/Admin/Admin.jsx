@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import Card from "../Card/Card";
 import { ClipLoader } from "react-spinners";
 import { Modal, Form, Input, DatePicker, TimePicker, Button, Upload } from "antd";
 import { FaUpload } from 'react-icons/fa';
+import EventContext from "../../context/EventContext";
 
 
 const apiStatusConstants = {
@@ -19,7 +20,11 @@ const Admin = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
   const [isAnnouncementOpen, setIsAnnouncementOpen] = useState(false);
+  const [search_events, setSearchEvents] = useState([]);
   const [fileList, setFileList] = useState([]);
+  const [announc_id, setAnnounceId] = useState("");
+  const { success,  contextHolder,  } = useContext(EventContext);
+
   const handleUploadChange = ({ fileList }) => {
     setFileList(fileList.reverse());
   };
@@ -38,14 +43,45 @@ const Admin = () => {
     form.resetFields();
   };
 
+  const handleEventChange = (e) => {
+    if (e.target.value != "") {
+      const result = events.filter(item => item.name.toLowerCase().includes(e.target.value.toLowerCase()));
+
+      setSearchEvents(result);
+    }
+    else {
+      setSearchEvents([]);
+    }
+  }
+
   const handleCancelAnnouncement = (e) => {
     e.stopPropagation();
     setIsAnnouncementOpen(false);
     form.resetFields();
   };
 
-  const handleSubmitAnnouncement = () => {
+  const handleSubmitAnnouncement = async (values) => {
 
+
+    try {
+      const url = import.meta.env.VITE_BACKEND_URL + "/events/announce";
+
+      const form_data = new FormData();
+      form_data.append('event_id', announc_id);
+      form_data.append('subject', values.subject);
+      form_data.append('des', values.des);
+      const result = await axios.post(url, form_data);
+
+      setIsAnnouncementOpen(false);
+      setSearchEvents([]);
+      form.resetFields();
+      setAnnounceId("");
+      success('sent succesfully');
+
+    }
+    catch (err) {
+      console.log(err);
+    }
   }
 
   const getEvents = async () => {
@@ -161,7 +197,7 @@ const Admin = () => {
   return (
     <>
       {renderEventDetails()}
-
+{  contextHolder}
       <Modal
         title={<h2 className="text-xl font-bold text-indigo-700">Add Event</h2>}
         open={isModalOpen}
@@ -261,20 +297,36 @@ const Admin = () => {
             label="Event Name"
             name="name"
             rules={[{ required: true, message: "Event name is required" }]}
+            onChange={handleEventChange}
           >
             <Input placeholder="Enter event name" />
+            {search_events.length > 0 && (
+              <div className="bg-gray-100 p-2">
+                {search_events.map((each, index) => (
+                  <div
+                    key={index}
+                    className="bg-white my-2 p-1 cursor-pointer"
+                    onClick={() => {
+                      form.setFieldValue("name", each.name);
+                      setSearchEvents([]);
+                      setAnnounceId(each._id);
+                    }}
+                  >
+                    <p className="text-black">{each.name}</p>
+                  </div>
+                ))}
+              </div>
+            )}
           </Form.Item>
 
           <Form.Item label="Subject" name="subject">
-            <Input.TextArea rows={3} placeholder="Enter subject" />
+            <Input placeholder="Enter subject" />
           </Form.Item>
 
 
           <Form.Item label="Description" name="des">
             <Input.TextArea rows={3} placeholder="Enter description" />
           </Form.Item>
-
-
 
           <Form.Item className="flex justify-end">
             <Button type="primary" htmlType="submit">
