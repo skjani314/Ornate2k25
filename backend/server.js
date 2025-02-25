@@ -6,6 +6,7 @@ import connectCloudinary from './config/cloudinary.js'
 import UserRouter from './routes/UserRouter.js';
 import EventRouter from './routes/EventRouter.js';
 import RegisterRoutes from './routes/RegisterRoutes.js';
+import upload from './middlewares/multer.js';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -13,6 +14,7 @@ connectDB();
 connectCloudinary();
 app.use(express.json());
 app.use(cors());
+app.use(upload.single('img'));
 app.use('/user', UserRouter);
 app.use('/events', EventRouter);
 app.use('/register', RegisterRoutes);
