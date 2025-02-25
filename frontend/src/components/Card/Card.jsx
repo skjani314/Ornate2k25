@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import { Modal, Form, Input, DatePicker, TimePicker, Button, Upload } from "antd";
 import { FaUpload } from 'react-icons/fa';
 import axios from "axios";
-import { useState, useEffect,useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { toast } from 'react-toastify';
 import EventContext from "../../context/EventContext";
 
@@ -14,7 +14,7 @@ const Card = ({ event, id, register, admin, getEvents }) => {
   const [isEdit, setEdit] = useState(false);
   const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
   const [newTeam, setNewTeam] = useState(false);
-  const [teamName,setTeamName]=useState("");
+  const [teamName, setTeamName] = useState("");
 
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
@@ -22,27 +22,29 @@ const Card = ({ event, id, register, admin, getEvents }) => {
     setFileList(fileList.reverse());
   };
 
-  const handleCreateTeam = async(e) => {
+  const handleCreateTeam = async (e) => {
     e.preventDefault();
     if (!teamName.trim()) {
       toast.error("Team name cannot be empty");
       return;
     }
-    try{
-      const url=import.meta.env.VITE_BACKEND_URL+'/register/team/create/';
-    const response=await axios.post(url,{event_id:event._id,team_name:teamName},{headers:{
-      Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-    }})
-   if(response.status >= 200 && response.status < 300){
-    toast.success('team creation success')
-    setNewTeam(false)
-   }
-   else{
-    toast.error("team creation failed")
-   }
+    try {
+      const url = import.meta.env.VITE_BACKEND_URL + '/register/team/create/';
+      const response = await axios.post(url, { event_id: event._id, team_name: teamName }, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        }
+      })
+      if (response.status >= 200 && response.status < 300) {
+        toast.success('team creation success')
+        setNewTeam(false)
+      }
+      else {
+        toast.error("team creation failed")
+      }
     }
-    catch(error){
+    catch (error) {
       console.log(error);
       toast.error(error.message)
     }
@@ -80,7 +82,7 @@ const Card = ({ event, id, register, admin, getEvents }) => {
     setIsModalOpen(false)
 
   }
- 
+
   const handleTeam = (e) => {
     e.stopPropagation();
   }
@@ -122,7 +124,7 @@ const Card = ({ event, id, register, admin, getEvents }) => {
     setIsTeamModalOpen(true);
   };
 
-  
+
 
   const handleRegister = (e) => {
     e.stopPropagation();
@@ -132,7 +134,7 @@ const Card = ({ event, id, register, admin, getEvents }) => {
       return;
     }
 
-    if (event.team_size === 1) {
+    if (event.team_size === '1') {
       individualRegister();
     } else {
       teamRegister();
@@ -380,23 +382,23 @@ const Card = ({ event, id, register, admin, getEvents }) => {
         centered
       >
         <div className="p-6 flex flex-col items-center space-y-4">
-    <h2 className="text-lg font-bold text-indigo-700">Create a New Team</h2>
-    <form onSubmit={handleCreateTeam} className="w-full flex flex-col items-center">
-      <label className="text-gray-700 font-medium">Team Name</label>
-      <input
-        type="text"
-        value={teamName}
-        onChange={(e) => setTeamName(e.target.value)}
-        className="w-64 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-      />
-      <button
-        type="submit"
-        className="w-40 mt-4 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105"
-      >
-        Confirm
-      </button>
-    </form>
-  </div>
+          <h2 className="text-lg font-bold text-indigo-700">Create a New Team</h2>
+          <form onSubmit={handleCreateTeam} className="w-full flex flex-col items-center">
+            <label className="text-gray-700 font-medium">Team Name</label>
+            <input
+              type="text"
+              value={teamName}
+              onChange={(e) => setTeamName(e.target.value)}
+              className="w-64 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+            <button
+              type="submit"
+              className="w-40 mt-4 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105"
+            >
+              Confirm
+            </button>
+          </form>
+        </div>
       </Modal>
 
     </>
