@@ -1,7 +1,7 @@
 import { IoTimeOutline } from "react-icons/io5";
 import dayjs from "dayjs";
 import { Modal, Form, Input, DatePicker, TimePicker, Button, Upload, Row } from "antd";
-import { FaUpload } from 'react-icons/fa';
+import { FaTrash, FaUpload } from 'react-icons/fa';
 import axios from "axios";
 import { useState, useEffect, useContext } from "react";
 import { toast } from 'react-toastify';
@@ -171,7 +171,24 @@ const Card = ({ event, id, register, admin, getEvents, members, team_lead, team_
     }
 
   }
+const handleDeleteTeam=async ()=>{
 
+
+try{
+
+  const url = import.meta.env.VITE_BACKEND_URL + '/register/team/delete/' + team_id;
+
+const result=await axios.delete(url);
+
+console.log(result);
+
+}
+catch(err){
+  console.log(err);
+}
+
+
+}
 
   const handleRegister = (e) => {
     e.stopPropagation();
@@ -487,6 +504,13 @@ const Card = ({ event, id, register, admin, getEvents, members, team_lead, team_
               <p className="text-white text-lg">
                 <strong className="text-green-400">Team_lead:</strong> {team_lead && team_lead.name}
               </p>
+              <button
+                className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center space-x-2 border border-red-500 shadow-md transition-all"
+                onClick={handleDeleteTeam}
+              >
+                <FaTrash className="w-5 h-5" />
+                <span>Delete Team</span>
+              </button>
 
               <h1 className="text-green-300 text-2xl font-bold text-center">
                 Team Members
