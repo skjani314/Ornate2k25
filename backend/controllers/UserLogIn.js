@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt';
 import RegisterModel from "../models/RegisterModel.js";
 import UserModel from "../models/UserModel.js"
 import OrganizerModel from "../models/OrganizerModel.js";
+import TeamModel from "../models/TeamModel.js";
 
 const UserLogin = async (req, res, next) => {
     try {
@@ -314,30 +315,29 @@ const OProfile = async (req, res, next) => {
     }
 }
 
-
 const MyEvents = async (req, res, next) => {
-
     try {
+        const id = req.id; 
 
-        const { user_id } = req.id;
+       
 
-        const result_solo = await RegisterModel.find({ user_id });
+        const result_solo = await RegisterModel.find({ user_id: id });
         const teams = await TeamModel.find({
-            $or: [{ team_lead: user_Id }, { members: user_id }]
+            $or: [{ team_lead: id }, { members: id }]
         })
             .populate("event_id")
             .populate("team_lead", "name email")
             .populate("members", "name email");
 
-        res.json({ teams, result_solo });
-
-
-
-    }
-    catch (err) {
+       
+        res.json({solo:result_solo,team:teams});
+       
+    } catch (err) {
         next(err);
     }
-}
+};
+
+
 
 
 export { UserLogin, UserRegister, SendOtp, passChange, OProfile, OLogin, ForgetPassword, ForgetVerify, Profile, MyEvents };

@@ -103,7 +103,6 @@ const Events = () => {
     try {
       const url = import.meta.env.VITE_BACKEND_URL+'/events/';
       const response = await axios.get(url);
-      console.log(response.data)
       setEvents(response.data);
       setApiStatus(apiStatusConstants.success);
     } catch (err) {

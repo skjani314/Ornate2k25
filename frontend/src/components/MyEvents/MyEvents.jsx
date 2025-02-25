@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import Card from "../Card/Card";
 import { ClipLoader } from "react-spinners";
+import EventContext from "../../context/EventContext";
+
 
 const apiStatusConstants = {
   initial: "INITIAL",
@@ -11,8 +13,11 @@ const apiStatusConstants = {
 };
 
 const MyEvents = () => {
+  const {accessToken}=useContext(EventContext)
+
   const [apiStatus, setApiStatus] = useState(apiStatusConstants.initial);
   const [eventDetails, setEventDetails] = useState([]);
+  const [soloEventDetails,setSoloEventDetails]=useState([]);
   const [profileDetails, setProfileDetails] = useState({
     name: "John Doe",
     email: "johndoe@example.com",
@@ -22,13 +27,21 @@ const MyEvents = () => {
   });
 
   const getEventDetails = async () => {
+   
     setApiStatus(apiStatusConstants.inProgress);
+    if(!accessToken){
+      return;
+    }
     try {
       const url = import.meta.env.VITE_BACKEND_URL + "/user/myevents/";
-      const response = await axios.get(url);
-      console.log(response.data);
-      setEventDetails(response.data);
+      const response = await axios.get(url,{headers:{
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      }});
+      setEventDetails(response.data.team);
+      setSoloEventDetails(response.data.solo);
       setApiStatus(apiStatusConstants.success);
+      console.log(soloEventDetails)
     } catch (err) {
       console.error("Error fetching events:", err);
       setApiStatus(apiStatusConstants.failure);
@@ -37,7 +50,7 @@ const MyEvents = () => {
 
   useEffect(() => {
     getEventDetails();
-  }, []);
+  }, [accessToken]);
 
   const renderFailureView = () => (
     <div className="flex flex-col items-center justify-center min-h-screen text-center text-red-500">
@@ -92,8 +105,9 @@ const MyEvents = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-10">
           {eventDetails.map((event, index) => (
-            <Card key={index} id={index} event={event} />
+            <Card key={index} id={index} event={event.event_id} />
           ))}
+          
         </div>
       </div>
     );

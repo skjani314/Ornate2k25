@@ -96,6 +96,7 @@ const Card = ({ event, id, register, admin, getEvents }) => {
   };
 
   const individualRegister = async () => {
+    
     try {
       const response = await axios.post(
         import.meta.env.VITE_BACKEND_URL + '/register/soloregister/',
@@ -132,7 +133,7 @@ const Card = ({ event, id, register, admin, getEvents }) => {
       return;
     }
 
-    if (event.team_size === 1) {
+    if (event.team_size === '1') {
       individualRegister();
     } else {
       teamRegister();
