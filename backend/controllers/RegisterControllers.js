@@ -1,28 +1,29 @@
 import RegisterModel from "../models/RegisterModel.js";
 import TeamModel from "../models/TeamModel.js";
-
-
-
+import mongoose from "mongoose";
 
 const SoloRegister = async (req, res, next) => {
-
-
-
     try {
+        const { id } = req; 
+        const { event_id } = req.body;
 
-        const { user_id, event_id } = req.body;
+     
+        if (!id || !event_id) {
+            return res.status(400).json({ error: "user_id and event_id are required" });
+        }
 
-        const result = await RegisterModel.create(user_id, event_id);
+       
+        const result = await RegisterModel.create({
+            user_id: new mongoose.Types.ObjectId(id), 
+            event_id: new mongoose.Types.ObjectId(event_id),
+        });
 
-        res.json(result);
+        res.status(201).json(result);
 
-    }
-    catch (err) {
+    } catch (err) {
         next(err);
     }
-
-
-}
+};
 
 const SoloUnregister = async (req, res, next) => {
 
@@ -41,24 +42,34 @@ const SoloUnregister = async (req, res, next) => {
 
 
 
+
 const CreateTeam = async (req, res, next) => {
-
-
     try {
+        const { team_name,event_id } = req.body;
+        const {id}=req;
+        console.log(team_name,event_id,id)
+        if (!team_name || !id || !event_id) {
+            return res.status(400).json({ error: "All fields are required" });
+        }
 
-        const { team_name, team_lead, event_id } = req.body;
+        
+        const newTeam = new TeamModel({
+            team_name,
+            team_lead: new mongoose.Types.ObjectId(id),
+            event_id: new mongoose.Types.ObjectId(event_id),
+            members: [],
 
-        const result = await TeamModel.create({ team_name, team_lead, event_id, members: [] });
+        });
 
+        const result = await newTeam.save();
+        res.json({team_code:result.team_code})
+        
 
-        res.json(result);
-
-    }
-    catch (err) {
+    } catch (err) {
         next(err);
     }
+};
 
-}
 
 
 const JoinTeam = async (req, res, next) => {

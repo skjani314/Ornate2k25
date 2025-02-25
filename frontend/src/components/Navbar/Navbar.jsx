@@ -53,7 +53,7 @@ const navigate=useNavigate();
          </NavLink>
         
           ))}
-{user==null?
+{user===null?
           <button  onClick={()=>setModel(true)} className="hidden md:block bg-green-500 p-2 text-white rounded-xl w-[80px] hover:bg-white hover:text-green-600 font-bold">
           Login
      </button>

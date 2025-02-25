@@ -15,7 +15,9 @@ const UserLogin = async (req, res, next) => {
 
         if (!user) {
             next(new Error("User Not Found"));
-        } {
+            return;
+        }
+         {
 
             const isMatch = await bcrypt.compare(password, user.password);
 
@@ -284,8 +286,8 @@ const UserRegister = async (req, res, next) => {
 const Profile = async (req, res, next) => {
 
     try {
-
-        const { id } = req.id;
+        
+        const { id } = req;
         const { role } = req.body;
         const result = await UserModel.findById(id).select('-password');
 

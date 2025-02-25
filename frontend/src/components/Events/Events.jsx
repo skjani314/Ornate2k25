@@ -33,7 +33,7 @@ const Events = () => {
       description:
         "A conference focusing on AI advancements in healthcare, featuring keynote speakers and panel discussions.",
       image: "medical_ai.jpg",
-      team_size: "Individual",
+      team_size:1,
     },
     {
       name: "Startup Pitch Fest",
@@ -104,7 +104,7 @@ const Events = () => {
       const url = import.meta.env.VITE_BACKEND_URL+'/events/';
       const response = await axios.get(url);
       console.log(response.data)
-      //setEvents(response.data);
+      setEvents(response.data);
       setApiStatus(apiStatusConstants.success);
     } catch (err) {
       console.error("Error fetching events:", err);

@@ -202,6 +202,15 @@ if(role!=="organizer"){
           },
         });
         setUser(result.data);
+        console.log(result.data)
+        setLogdata({email:'',password:''});
+        
+      
+        props.handleCancel();
+        setLoading(false);
+      
+
+        success("Logged In successfully");
 }
 else{
   const token=await axios.post(import.meta.env.VITE_BACKEND_URL+'/user/auth/ologin',LogData);
@@ -213,17 +222,19 @@ else{
     },
   });
   setUser({...result.data,role:"organizer"});
-}
-
-        setLogdata({email:'',password:''});
+  navigate('/admin');
+  setLogdata({email:'',password:''});
         
       
-        props.handleCancel();
-        setLoading(false);
-      
+  props.handleCancel();
+  setLoading(false);
 
-        success("Logged In successfully");
-        navigate('/admin');
+
+  success("Logged In successfully");
+}
+
+       
+       
 
        }catch(err)
        {

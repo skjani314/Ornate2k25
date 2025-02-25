@@ -6,6 +6,10 @@ import Admin from "./components/Admin/Admin"
 import {message} from 'antd';
 import EventContext from "./context/EventContext"
 import { useEffect, useState } from "react"
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import axios from "axios"
+
 
 const App = () => {
 
@@ -71,6 +75,7 @@ getUser();
   return (
     <EventContext.Provider value={data}>
     <div className="bg-dark-800">
+      <ToastContainer/>
       <Navbar fix/>
       <Navbar/>
       <Routes>

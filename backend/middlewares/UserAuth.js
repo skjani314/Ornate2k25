@@ -7,7 +7,7 @@ const UserAuth = async (req, res, next) => {
 
     try {
         const token  =  req.headers.authorization.split(" ")[1];
-        console.log(token)
+       
         if (!token) {
             return next(new Error("User Not Found"));
         }
@@ -15,8 +15,10 @@ const UserAuth = async (req, res, next) => {
 
 
             const token_decode = await jwt.verify(token, process.env.KEY);
-            req.id = token_decode.id;
+            const {id}=token_decode;
+            req.id = id;
             const user = await UserModel.findById(token_decode.id);
+            
             if (user != null) {
                 next();
             }
