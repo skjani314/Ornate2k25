@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(cors());
 app.use('/user', UserRouter);
 app.use('/events', EventRouter);
-app.use('/regiter', RegisterRoutes);
+app.use('/register', RegisterRoutes);
 
 
 app.use((err, req, res, next) => {

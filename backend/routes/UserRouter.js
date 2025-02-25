@@ -10,7 +10,7 @@ UserRouter.post('/auth/send-otp', SendOtp);
 UserRouter.post('/auth/forget/', ForgetPassword);
 UserRouter.post('/auth/verify', ForgetVerify);
 UserRouter.post('/auth/passchange', passChange);
-UserRouter.get('/user/profile', Profile)
-UserRouter.get('/user/myevents', MyEvents);
+UserRouter.get('/profile', Profile)
+UserRouter.get('/myevents', MyEvents);
 
 export default UserRouter;

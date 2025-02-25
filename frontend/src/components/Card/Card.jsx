@@ -1,13 +1,5 @@
-import
-{ Modal }
-from
-"antd"
-;
-import
-{ Card as AntdCard} 
-from
-"antd"
-;
+import { Modal } from "antd"; 
+import { Card as AntdCard} from "antd";
 import { useState } from "react";
 const Card = ({event,id,register,admin}) => {
     const [isModalOpen,setIsModalOpen]=useState(false);
