@@ -11,6 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
 import UnauthorizedPage from "./components/unauthorized/UnautherizedPage"
 import Forgotpass from "./components/Navbar/ForgetPass"
+import Registrations from "./components/Admin/Registrations"
 
 
 const apiStatusConstants = {
@@ -154,6 +155,7 @@ const App = () => {
           <Route exact path="/my-account" element={<MyEvents />} />
           <Route path='/forgot/:token' element={<Forgotpass />} />
           <Route exact path="/admin" element={user && user.role == 'organizer' ? <Admin /> : <UnauthorizedPage />} />
+          <Route exact path="/event/:id" element={user && user.role == 'organizer' ? <Registrations /> : <UnauthorizedPage />} />
 
         </Routes>
       </div>
