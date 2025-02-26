@@ -29,7 +29,7 @@ const [accessToken,setAccessToken]=useState(localStorage.getItem('accessToken')?
   const [apiStatus, setApiStatus] = useState(apiStatusConstants.initial);
   const [eventDetails, setEventDetails] = useState([]);
   const [soloEventDetails, setSoloEventDetails] = useState([]);
-  
+  const [isSearchActive,setIsSearchActive]=useState(false);
 
  
    
@@ -88,7 +88,8 @@ const data={
   apiStatus,
   eventDetails,
   soloEventDetails,
- 
+ setIsSearchActive,
+ isSearchActive
 }
 
 

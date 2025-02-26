@@ -1,7 +1,10 @@
 import Card from "../Card/Card";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
+import { Input, Space } from "antd";
+import EventContext from "../../context/EventContext";
+const { Search } = Input;
 
 const apiStatusConstants = {
   initial: "INITIAL",
@@ -13,6 +16,12 @@ const apiStatusConstants = {
 const Events = () => {
   const [apiStatus, setApiStatus] = useState(apiStatusConstants.initial);
   const [events, setEvents] = useState([]);
+  const {isSearchActive,setIsSearchActive}=useContext(EventContext)
+
+  const onSearch = (value) => {
+    console.log("Search input:", value);
+  };
+
 
   const renderLoadingView = () => (
     <div className="flex justify-center items-center min-h-screen" data-testid="loader">
@@ -38,6 +47,23 @@ const Events = () => {
   }, []);
 
   const renderEventsDetailsView = () => (
+    <>
+    
+   {
+    isSearchActive &&
+    <div className="sm:hidden text-center mt-5">
+    <Space direction="vertical" style={{ width: "300px" }} >
+      <Search
+        placeholder="Input search text"
+        allowClear
+        enterButton="Search"
+        size="large"
+        onSearch={onSearch}
+      />
+    </Space>
+    </div>
+   }
+
     <div className="min-h-screen p-6">
       <div className="text-center">
         <h1 className="text-3xl font-bold text-green-300 shadow-lg">
@@ -51,6 +77,7 @@ const Events = () => {
         ))}
       </div>
     </div>
+    </>
   );
 
   

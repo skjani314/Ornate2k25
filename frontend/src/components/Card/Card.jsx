@@ -285,11 +285,11 @@ catch(err){
             ⏳ <strong>Deadline:</strong> {event.deadline ? dayjs(event.deadline).format("D ddd YYYY") : "Loading..."}
           </p>
           {register ? <div className="text-center mt-3">
-            <button className="bg-gray-700 hover:bg-green-600 hover:border-green-600 text-white font-semibold py-2 px-4 rounded-xl border border-gray-600 w-1/3 transition duration-300 shadow-lg" onClick={(e) => { handleRegister(e) }}>Register</button>
+            <button className="bg-gray-700 hover:bg-green-600 hover:border-green-600 text-white font-semibold py-2 px-4 rounded-xl border border-gray-600 w-2/3 transition duration-300 shadow-lg" onClick={(e) => { handleRegister(e) }}>Register</button>
           </div> :
             admin ? <div className="mt-3 flex">
-              <button className="bg-gray-700 hover:bg-green-600 hover:border-green-600 text-white font-semibold py-2 px-4 rounded-xl border border-gray-600 w-1/3 transition duration-300 shadow-lg ml-3" onClick={(e) => { handleEdit(e) }}>Edit</button>
-              <button className="bg-gray-700 hover:bg-green-600 hover:border-green-600 text-white font-semibold py-2 px-4 rounded-xl border border-gray-600 w-1/3 transition duration-300 shadow-lg ml-3" onClick={(e) => { handleRemove(e) }}>Remove</button>
+              <button className="bg-gray-700 hover:bg-green-600 hover:border-green-600 text-white font-semibold py-2 px-4 rounded-xl border border-gray-600 w-2/3 transition duration-300 shadow-lg ml-3" onClick={(e) => { handleEdit(e) }}>Edit</button>
+              <button className="bg-gray-700 hover:bg-green-600 hover:border-green-600 text-white font-semibold py-2 px-4 rounded-xl border border-gray-600 w-2/3 transition duration-300 shadow-lg ml-3" onClick={(e) => { handleRemove(e) }}>Remove</button>
             </div> :
               <div className="text-center mt-3">
                 <button className="bg-gray-700 hover:bg-green-600 hover:border-green-600 text-white font-semibold py-2 px-4 rounded-xl border border-gray-600 w-2/3 transition duration-300 shadow-lg" onClick={(e) => { handleTeam(e) }}>My Team</button>
