@@ -31,8 +31,9 @@ const App = () => {
   const [eventDetails, setEventDetails] = useState([]);
   const [soloEventDetails, setSoloEventDetails] = useState([]);
   const [my_events, setMySevents] = useState([]);
-  const [isSearchActive,setIsSearchActive]=useState(false);
-
+  const [isSearchActive, setIsSearchActive] = useState(false);
+  const [events, setEvents] = useState([]);
+  const [search_events, setSearchEvents] = useState([]);
 
 
 
@@ -80,22 +81,28 @@ const App = () => {
   };
 
 
-const data={
-  success,
-  error,
-  contextHolder,
-  user,
-  setUser,
-  accessToken,
-  setAccessToken,
-  apiStatus,
-  eventDetails,
-  soloEventDetails,
- setIsSearchActive,
- isSearchActive,
- getEvents: getEventDetails,
- my_events
-}
+  const data = {
+    success,
+    error,
+    contextHolder,
+    user,
+    setUser,
+    accessToken,
+    setAccessToken,
+    apiStatus,
+    eventDetails,
+    soloEventDetails,
+    setIsSearchActive,
+    isSearchActive,
+    getEvents: getEventDetails,
+    my_events,
+    setMySevents,
+    events,
+    setEvents,
+    search_events,
+    setSearchEvents
+
+  }
 
 
   useEffect(() => {

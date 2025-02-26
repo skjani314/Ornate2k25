@@ -40,9 +40,12 @@ const Card = ({ solo, event, id, registered, register, admin, members, team_lead
           "Content-Type": "application/json",
         }
       })
+
       if (response.status >= 200 && response.status < 300) {
         toast.success('team creation success')
         setNewTeam(false)
+        getEvents();
+
       }
       else {
         toast.error("team creation failed")
@@ -141,7 +144,7 @@ const Card = ({ solo, event, id, registered, register, admin, members, team_lead
       form_data.append('user_id', user._id);
       form_data.append('team_code', joinTeam.team_code);
       form_data.append('event_id', event._id);
-      const url = import.meta.env.VITE_BACKEND_URL + '/register/team/join';
+      const url = `${import.meta.env.VITE_BACKEND_URL}/register/team/join`;
       const result = await axios.post(url, form_data, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -152,6 +155,8 @@ const Card = ({ solo, event, id, registered, register, admin, members, team_lead
       console.log(result);
       setJoinTeam({ open: false, team_code: "" })
       success("Joined in team")
+      getEvents();
+
     }
     catch (err) {
       error("Team filled")

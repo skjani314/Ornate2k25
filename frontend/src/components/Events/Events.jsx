@@ -1,10 +1,10 @@
 import Card from "../Card/Card";
 import { useState, useEffect, useContext } from "react";
-
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
 import { Input, Space } from "antd";
 import EventContext from "../../context/EventContext";
+import { useParams, Link, useLocation } from 'react-router-dom';
 const { Search } = Input;
 
 const apiStatusConstants = {
@@ -16,10 +16,11 @@ const apiStatusConstants = {
 
 const Events = () => {
   const [apiStatus, setApiStatus] = useState(apiStatusConstants.initial);
-  const [events, setEvents] = useState([]);
   const { my_events } = useContext(EventContext);
-  const {isSearchActive,setIsSearchActive}=useContext(EventContext)
-
+  const { isSearchActive, setIsSearchActive, events, setEvents, search_events, setSearchEvents } = useContext(EventContext)
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  console.log(searchParams.get("event"));
   const onSearch = (value) => {
     console.log("Search input:", value);
   };
@@ -34,7 +35,21 @@ const Events = () => {
   const getEvents = async () => {
     setApiStatus(apiStatusConstants.inProgress);
     try {
-      const url = import.meta.env.VITE_BACKEND_URL + '/events/';
+      const query = searchParams.get("event") ? searchParams.get("event").toLocaleLowerCase() : "";
+      const url = import.meta.env.VITE_BACKEND_URL + '/events/?event=' + query;
+      const response = await axios.get(url);
+      console.log(response);
+      setSearchEvents(response.data);
+      setApiStatus(apiStatusConstants.success);
+    } catch (err) {
+      console.error("Error fetching events:", err);
+      setApiStatus(apiStatusConstants.failure);
+    }
+  };
+  const getAllEvents = async () => {
+    setApiStatus(apiStatusConstants.inProgress);
+    try {
+      const url = import.meta.env.VITE_BACKEND_URL + '/events/?event=' + "";
       const response = await axios.get(url);
       setEvents(response.data);
       setApiStatus(apiStatusConstants.success);
@@ -46,42 +61,40 @@ const Events = () => {
 
   useEffect(() => {
     getEvents();
-  }, []);
+    getAllEvents();
+  }, [location]);
 
   console.log(events)
   console.log(my_events)
 
   const renderEventsDetailsView = () => (
     <>
-    
-   {
-    isSearchActive &&
-    <div className="sm:hidden text-center mt-5">
-    <Space direction="vertical" style={{ width: "300px" }} >
-      <Search
-        placeholder="Input search text"
-        allowClear
-        enterButton="Search"
-        size="large"
-        onSearch={onSearch}
-      />
-    </Space>
-    </div>
-   }
 
-    <div className="min-h-screen p-6">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold text-green-300 shadow-lg">
-          Upcoming Events
-        </h1>
-      </div>
+     
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-10">
-        {events.map((event, index) => (
-          <Card event={event} key={index} id={index} registered={my_events.includes(event._id)} register />
-        ))}
+      <div className="min-h-screen p-6">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-green-300 shadow-lg">
+            Upcoming Events
+          </h1>
+        </div>
+        {searchParams.get("event") ?
+          <h1 className="text-white  text-2xl font-bold">Search Result for {searchParams.get("event")}</h1>
+          : null}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-10">
+          {
+            searchParams.get("event") ?
+              search_events.map((event, index) => (
+                <Card event={event} key={index} id={index} registered={my_events.includes(event._id)} register />
+              ))
+              :
+              events.map((event, index) => (
+                <Card event={event} key={index} id={index} registered={my_events.includes(event._id)} register />
+              ))
+
+          }
+        </div>
       </div>
-    </div>
     </>
   );
 

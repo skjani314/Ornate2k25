@@ -40,10 +40,19 @@ const AddEvent = async (req, res, next) => {
 const GetEvents = async (req, res, next) => {
 
     try {
+        const event = req.query.event?.trim();
 
-        const result = await EventModel.find();
 
+        console.log("Searching for event:", event);
+
+        const regex = new RegExp(event, "i");
+
+        const result = await EventModel.find({ name: { $regex: regex } });
+        ;
+
+        console.log("Query result:", result);
         res.json(result);
+
 
     }
     catch (err) {

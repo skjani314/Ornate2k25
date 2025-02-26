@@ -25,6 +25,7 @@ const Admin = () => {
   const [announc_id, setAnnounceId] = useState("");
   const { success, contextHolder } = useContext(EventContext);
   const accessToken = localStorage.getItem('accessToken');
+  const [search_val, setSearchVal] = useState("");
 
   const handleUploadChange = ({ fileList }) => {
     setFileList(fileList.reverse());
@@ -45,9 +46,11 @@ const Admin = () => {
   };
 
   const handleEventChange = (e) => {
-    if (e.target.value != "") {
-      const result = events.filter(item => item.name.toLowerCase().includes(e.target.value.toLowerCase()));
+    setSearchVal(e.target.value);
 
+    if (e.target.value != "") {
+
+      const result = events.filter(item => item.name.toLowerCase().includes(e.target.value.toLowerCase()));
       setSearchEvents(result);
     }
     else {
@@ -77,6 +80,7 @@ const Admin = () => {
           "Content-Type": "application/json",
         }
       });
+      console.log(result);
 
       setIsAnnouncementOpen(false);
       setSearchEvents([]);
@@ -304,32 +308,28 @@ const Admin = () => {
         centered
       >
         <Form form={form} layout="vertical" onFinish={handleSubmitAnnouncement}>
-          <Form.Item
-            label="Event Name"
-            name="name"
-            rules={[{ required: true, message: "Event name is required" }]}
+          <h2>Event name</h2>
+          <Input placeholder="Enter event name" value={search_val}
             onChange={handleEventChange}
-          >
-            <Input placeholder="Enter event name" />
-            {search_events.length > 0 && (
-              <div className="bg-gray-100 p-2">
-                {search_events.map((each, index) => (
-                  <div
-                    key={index}
-                    className="bg-white my-2 p-1 cursor-pointer"
-                    onClick={() => {
-                      form.setFieldValue("name", each.name);
-                      setSearchEvents([]);
-                      setAnnounceId(each._id);
-                    }}
-                  >
-                    <p className="text-black">{each.name}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </Form.Item>
-
+          />
+          {search_events.length > 0 && (
+            <div className="bg-gray-100 p-2">
+              {search_events.map((each, index) => (
+                <div
+                  key={index}
+                  className="bg-white my-2 p-1 cursor-pointer"
+                  onClick={() => {
+                    setSearchVal(each.name)
+                    setSearchEvents([]);
+                    setAnnounceId(each._id);
+                  }}
+                >
+                  <p className="text-black">{each.name}</p>
+                </div>
+              ))}
+            </div>
+          )}
+          <p className="mt-1"></p>
           <Form.Item label="Subject" name="subject">
             <Input placeholder="Enter subject" />
           </Form.Item>
