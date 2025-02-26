@@ -9,7 +9,7 @@ import EventContext from "../../context/EventContext";
 import TeamMemberList from "../MyEvents/TeamMemberList";
 
 
-const Card = ({ solo, event, id, registered, register, admin, members, team_lead, team_code, team_name, team_id }) => {
+const Card = ({ solo, setSearchVal, event, id, registered, register, admin, members, team_lead, team_code, team_name, team_id }) => {
   const { user } = useContext(EventContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEdit, setEdit] = useState(false);
@@ -20,7 +20,7 @@ const Card = ({ solo, event, id, registered, register, admin, members, team_lead
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [myteam, setMyTeam] = useState(false);
-  const { success, error, getEvents, my_events } = useContext(EventContext);
+  const { success, error, getEvents, my_events, getAllEvents } = useContext(EventContext);
   const accessToken = localStorage.getItem('accessToken');
   const handleUploadChange = ({ fileList }) => {
     setFileList(fileList.reverse());
@@ -281,13 +281,14 @@ const Card = ({ solo, event, id, registered, register, admin, members, team_lead
       const result = await axios.put(url, form_Data, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
-      
+
         }
       });
       console.log(result);
       setEdit(false);
       form.resetFields();
-      getEvents();
+      getAllEvents()
+      setSearchVal(prev => ({ ...prev }))
 
     } catch (error) {
       console.error("Error submitting event:", error);

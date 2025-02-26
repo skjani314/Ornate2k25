@@ -109,7 +109,7 @@ const Admin = () => {
 
   useEffect(() => {
     getEvents();
-  }, []);
+  }, [search_val]);
 
   const handleSubmit = async (values) => {
     try {
@@ -119,9 +119,9 @@ const Admin = () => {
       const form_Data = new FormData();
       if (fileList && fileList.length > 0) {
         fileList.forEach(file => {
-            form_Data.append('img', file.originFileObj);
+          form_Data.append('img', file.originFileObj);
         });
-    }
+      }
       form_Data.append('name', values.name);
       form_Data.append('date', values.date);
       form_Data.append('deadline', values.deadline);
@@ -138,7 +138,7 @@ const Admin = () => {
       const result = await axios.post(url, form_Data, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
-         
+
         }
       });
       console.log(result);
@@ -192,7 +192,7 @@ const Admin = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-10">
         {events.map((event, index) => (
-          <Card event={event} key={index} id={index} getEvents={getEvents} admin />
+          <Card event={event} key={index} id={index} getEvents={getEvents} setSearchVal={setSearchVal} admin />
         ))}
       </div>
     </div>

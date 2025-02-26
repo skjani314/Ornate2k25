@@ -17,7 +17,7 @@ const apiStatusConstants = {
 const Events = () => {
   const [apiStatus, setApiStatus] = useState(apiStatusConstants.initial);
   const { my_events } = useContext(EventContext);
-  const { isSearchActive, setIsSearchActive, events, setEvents, search_events, setSearchEvents } = useContext(EventContext)
+  const { isSearchActive, setIsSearchActive, events, setEvents, search_events, setSearchEvents, getAllEvents } = useContext(EventContext)
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   console.log(searchParams.get("event"));
@@ -46,18 +46,7 @@ const Events = () => {
       setApiStatus(apiStatusConstants.failure);
     }
   };
-  const getAllEvents = async () => {
-    setApiStatus(apiStatusConstants.inProgress);
-    try {
-      const url = import.meta.env.VITE_BACKEND_URL + '/events/?event=' + "";
-      const response = await axios.get(url);
-      setEvents(response.data);
-      setApiStatus(apiStatusConstants.success);
-    } catch (err) {
-      console.error("Error fetching events:", err);
-      setApiStatus(apiStatusConstants.failure);
-    }
-  };
+
 
   useEffect(() => {
     getEvents();
@@ -70,7 +59,7 @@ const Events = () => {
   const renderEventsDetailsView = () => (
     <>
 
-     
+
 
       <div className="min-h-screen p-6">
         <div className="text-center">

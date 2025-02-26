@@ -80,7 +80,18 @@ const App = () => {
     });
   };
 
-
+  const getAllEvents = async () => {
+    setApiStatus(apiStatusConstants.inProgress);
+    try {
+      const url = import.meta.env.VITE_BACKEND_URL + '/events/?event=' + "";
+      const response = await axios.get(url);
+      setEvents(response.data);
+      setApiStatus(apiStatusConstants.success);
+    } catch (err) {
+      console.error("Error fetching events:", err);
+      setApiStatus(apiStatusConstants.failure);
+    }
+  };
   const data = {
     success,
     error,
@@ -95,6 +106,7 @@ const App = () => {
     setIsSearchActive,
     isSearchActive,
     getEvents: getEventDetails,
+    getAllEvents,
     my_events,
     setMySevents,
     events,
