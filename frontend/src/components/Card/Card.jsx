@@ -7,6 +7,7 @@ import { useState, useEffect, useContext } from "react";
 import { toast } from 'react-toastify';
 import EventContext from "../../context/EventContext";
 import TeamMemberList from "../MyEvents/TeamMemberList";
+import { Link } from "react-router-dom";
 
 
 const Card = ({ solo, setSearchVal, event, id, registered, register, admin, members, team_lead, team_code, team_name, team_id }) => {
@@ -244,7 +245,7 @@ const Card = ({ solo, setSearchVal, event, id, registered, register, admin, memb
         }
       });
       console.log(result);
-      getEvents();
+      setSearchVal(prev => ({ ...prev }));
 
     }
     catch (err) {
@@ -287,8 +288,8 @@ const Card = ({ solo, setSearchVal, event, id, registered, register, admin, memb
       console.log(result);
       setEdit(false);
       form.resetFields();
-      getAllEvents()
-      setSearchVal(prev => ({ ...prev }))
+      // getAllEvents()
+      setSearchVal(prev => ({ ...prev }));
 
     } catch (error) {
       console.error("Error submitting event:", error);
@@ -351,10 +352,17 @@ const Card = ({ solo, setSearchVal, event, id, registered, register, admin, memb
                 <button className="bg-green-600 hover:bg-gray-600 hover:border-green-600 text-white font-semibold py-2 px-4 rounded-xl border border-gray-600 w-2/3 transition duration-300 shadow-lg" >Registered</button>
               </div>
             :
-            admin ? <div className="mt-3 flex">
-              <button className="bg-gray-700 hover:bg-green-600 hover:border-green-600 text-white font-semibold py-2 px-4 rounded-xl border border-gray-600 w-2/3 transition duration-300 shadow-lg ml-3" onClick={(e) => { handleEdit(e) }}>Edit</button>
-              <button className="bg-gray-700 hover:bg-green-600 hover:border-green-600 text-white font-semibold py-2 px-4 rounded-xl border border-gray-600 w-2/3 transition duration-300 shadow-lg ml-3" onClick={(e) => { handleRemove(e) }}>Remove</button>
-            </div> :
+            admin ?
+              <div className="flex-col ">
+                <div className="mt-3 flex">
+                  <button className="bg-gray-700 hover:bg-green-600 hover:border-green-600 text-white font-semibold py-2 px-4 rounded-xl border border-gray-600 w-2/3 transition duration-300 shadow-lg ml-3" onClick={(e) => { handleEdit(e) }}>Edit</button>
+                  <button className="bg-gray-700 hover:bg-green-600 hover:border-green-600 text-white font-semibold py-2 px-4 rounded-xl border border-gray-600 w-2/3 transition duration-300 shadow-lg ml-3" onClick={(e) => { handleRemove(e) }}>Remove</button>
+                </div>
+                <Link to={"/event/" + event._id}>
+                  <button className="bg-green-700  mt-1 hover:bg-green-600 hover:border-green-600 text-white font-semibold py-2 px-4 rounded-xl border border-gray-600 w-full transition duration-300 shadow-lg ml-3">Registrations</button>
+                </Link>
+              </div>
+              :
               solo ?
                 <div className="text-center mt-3">
                   <button className="bg-gray-700 hover:bg-green-600 hover:border-green-600 text-white font-semibold py-2 px-4 rounded-xl border border-gray-600 w-2/3 transition duration-300 shadow-lg" onClick={handleSoloUnregister} >Un Register</button>

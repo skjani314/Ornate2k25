@@ -37,6 +37,117 @@ const AddEvent = async (req, res, next) => {
 }
 
 
+const EventRegister = async (req, res, next) => {
+
+    try {
+
+        const { id } = req.params;
+        const event_details = await EventModel.findById(id);
+
+        if (event_details.team_size == "1") {
+
+
+            const users = await RegisterModel.aggregate([
+                {
+                    $match: { event_id: new mongoose.Types.ObjectId(id) } // Match the specific event
+                },
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'user_id',
+                        foreignField: '_id',
+                        as: 'userInfo'
+                    }
+                },
+                {
+                    $unwind: '$userInfo'
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        name: '$userInfo.name',
+                        email: '$userInfo.email',
+                        mobile: '$userInfo.mobile',
+                        branch: '$userInfo.branch',
+                        collage_id: '$userInfo.collage_id'
+                    }
+                }
+            ]);
+
+            res.json({ event: event_details, members: users });
+
+        }
+        else {
+
+
+            const teams = await TeamModel.aggregate([
+                {
+                    $match: { event_id: new mongoose.Types.ObjectId(id) } // Match the specific event
+                },
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'team_lead',
+                        foreignField: '_id',
+                        as: 'teamLeadInfo'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'members',
+                        foreignField: '_id',
+                        as: 'membersInfo'
+                    }
+                },
+                {
+                    $unwind: '$teamLeadInfo' // Convert array into an object for team lead
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        team_name: 1,
+                        team_code: 1,
+                        team_lead: {
+                            name: '$teamLeadInfo.name',
+                            email: '$teamLeadInfo.email',
+                            mobile: '$teamLeadInfo.mobile',
+                            branch: '$teamLeadInfo.branch',
+                            collage_id: '$teamLeadInfo.collage_id'
+                        },
+                        members: {
+                            $map: {
+                                input: '$membersInfo',
+                                as: 'member',
+                                in: {
+                                    name: '$$member.name',
+                                    email: '$$member.email',
+                                    mobile: '$$member.mobile',
+                                    branch: '$$member.branch',
+                                    collage_id: '$$member.collage_id'
+                                }
+                            }
+                        }
+                    }
+                }
+            ]);
+
+            res.json({ event: event_details, members: teams });
+
+
+
+        }
+
+
+    }
+    catch (err) {
+        console.log(err);
+    }
+
+
+}
+
+
 
 const GetEvents = async (req, res, next) => {
 
@@ -215,4 +326,4 @@ const Announce = async (req, res, next) => {
 }
 
 
-export { AddEvent, GetEvents, DeleteEvent, UpdateEvent, Announce }
+export { AddEvent, GetEvents, DeleteEvent, UpdateEvent, Announce, EventRegister }
