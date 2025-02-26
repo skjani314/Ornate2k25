@@ -210,12 +210,13 @@ function LogIn(props) {
       else {
         const token = await axios.post(import.meta.env.VITE_BACKEND_URL + '/user/auth/ologin', LogData);
         localStorage.setItem("accessToken", token.data);
-        const result = await axios.get(import.meta.env.VITE_BACKEND_URL + '/user/oprofile', {
+        const result = await axios.get(import.meta.env.VITE_BACKEND_URL + '/user/profile', {
           headers: {
             Authorization: `Bearer ${token.data}`,
             "Content-Type": "application/json",
           },
         });
+
         setUser({ ...result.data, role: "organizer" });
         setAccessToken(token);
 
@@ -247,12 +248,12 @@ function LogIn(props) {
     setLoading(true);
 
     try {
-      const result = await axios.post(import.meta.env.BACKEND_URL + '/forget', { email: forgetpass.email })
+      const result = await axios.post(import.meta.env.VITE_BACKEND_URL + '/user/auth/forget', { email: forgetpass.email })
       success("Reset Link sent to Mail Successfully");
       setLoading(false);
       setForgetPass({ email: '', flag: false });
       setOtpform(false);
-      props.handleModalCancel();
+      // props.handleModalCancel();
 
     } catch {
       error("User not found");

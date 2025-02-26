@@ -16,9 +16,9 @@ const navList = [
 ];
 
 const Navbar = (props) => {
-  const {fix}=props;
-  const [isOpen, setIsOpen] = useState(false); 
-  const [isModel,setModel]=useState(false);
+  const { fix } = props;
+  const [isOpen, setIsOpen] = useState(false);
+  const [isModel, setModel] = useState(false);
   const [otpform, setOtpform] = useState(false);
   const {user,accessToken,setAccessToken,setUser,setIsSearchActive,isSearchActive}=useContext(EventContext);  
 
@@ -101,7 +101,7 @@ const navigate=useNavigate();
         
       </div>
 
-    
+
       {isOpen && (
   <div className="md:hidden flex flex-col items-center mt-3 space-y-3 bg-indigo-500 p-4 rounded-lg shadow-lg">
     {navList.map(({ id, displayText }) => (
@@ -144,7 +144,7 @@ const navigate=useNavigate();
   </div>
 )}
       <Modal footer={null} onCancel={handleCancel} open={isModel}>
-       <LogIn otpform={otpform} setOtpform={setOtpform} handleCancel={handleCancel} />
+        <LogIn otpform={otpform} setOtpform={setOtpform} handleCancel={handleCancel} />
       </Modal>
     </nav>
   );

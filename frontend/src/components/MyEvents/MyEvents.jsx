@@ -4,7 +4,7 @@ import Card from "../Card/Card";
 import { ClipLoader } from "react-spinners";
 import EventContext from "../../context/EventContext";
 import { toast } from "react-toastify";
- 
+
 
 
 const apiStatusConstants = {
@@ -16,19 +16,19 @@ const apiStatusConstants = {
 
 const MyEvents = () => {
 
-  const {apiStatus,eventDetails,soloEventDetails,user,accessToken}=useContext(EventContext)
-  
+  const { apiStatus, eventDetails, soloEventDetails, user, accessToken } = useContext(EventContext)
+
   const renderLoggedOutView = () => (
     <div className="flex flex-col items-center justify-center min-h-screen text-center">
       <h1 className="text-2xl font-bold text-red-600">You're Not Logged In!</h1>
       <p className="text-lg text-gray-700 mt-2">
         Please log in to view your events.
       </p>
-      
+
     </div>
   );
 
-  
+
 
   const renderFailureView = () => (
     <div className="flex flex-col items-center justify-center min-h-screen text-center text-red-500">
@@ -43,7 +43,7 @@ const MyEvents = () => {
     </div>
   );
 
-  
+
 
   const renderLoadingView = () => (
     <div className="flex justify-center items-center min-h-screen" data-testid="loader">
@@ -60,20 +60,22 @@ const MyEvents = () => {
               Profile Information
             </h1>
           </div>
-          <div className="space-y-2">
-            <p className="text-white text-lg">
-              <strong className="text-green-400">Name:</strong> {user.name}
-            </p>
-            <p className="text-white text-lg">
-              <strong className="text-green-400">Email:</strong> {user.email}
-            </p>
-            <p className="text-white text-lg">
-              <strong className="text-green-400">Phone:</strong> {user.mobile}
-            </p>
-            <p className="text-white text-lg">
-              <strong className="text-green-400">Id:</strong> {user.collage_id}
-            </p>
-          </div>
+          {user &&
+            <div className="space-y-2">
+              <p className="text-white text-lg">
+                <strong className="text-green-400">Name:</strong> {user.name}
+              </p>
+              <p className="text-white text-lg">
+                <strong className="text-green-400">Email:</strong> {user.email}
+              </p>
+              <p className="text-white text-lg">
+                <strong className="text-green-400">Phone:</strong> {user.mobile}
+              </p>
+              <p className="text-white text-lg">
+                <strong className="text-green-400">Id:</strong> {user.collage_id}
+              </p>
+            </div>
+          }
         </div>
 
         <div className="text-center">
@@ -99,7 +101,7 @@ const MyEvents = () => {
           <h1 className="text-blue-800 text-3xl font-bold">Solo</h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-4">
             {soloEventDetails.map((event, index) => (
-              <Card key={index} id={index} event={event.event_id} />
+              <Card key={index} id={index} event={event.event_id} solo />
             ))}
           </div>
         </div>
@@ -109,7 +111,7 @@ const MyEvents = () => {
   };
 
   const renderEventDetails = () => {
-    if(!accessToken){
+    if (!accessToken) {
       return renderLoggedOutView();
     }
     switch (apiStatus) {

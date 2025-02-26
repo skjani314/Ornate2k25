@@ -6,7 +6,7 @@ const TeamSchema = new mongoose.Schema({
     team_lead: { type: mongoose.Types.ObjectId, required: true, ref: 'users', unique: true }, 
     event_id: { type: mongoose.Types.ObjectId, required: true, ref: 'events' },
     members: [{ type: mongoose.Types.ObjectId, ref: 'users' }],
-    team_code: { type: String, unique: true }
+    team_code: { type: String, unique: true },
 });
 
 TeamSchema.pre("save", function (next) {

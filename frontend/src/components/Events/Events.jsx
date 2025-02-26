@@ -1,5 +1,6 @@
 import Card from "../Card/Card";
 import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
 import { Input, Space } from "antd";
@@ -16,6 +17,7 @@ const apiStatusConstants = {
 const Events = () => {
   const [apiStatus, setApiStatus] = useState(apiStatusConstants.initial);
   const [events, setEvents] = useState([]);
+  const { my_events } = useContext(EventContext);
   const {isSearchActive,setIsSearchActive}=useContext(EventContext)
 
   const onSearch = (value) => {
@@ -32,7 +34,7 @@ const Events = () => {
   const getEvents = async () => {
     setApiStatus(apiStatusConstants.inProgress);
     try {
-      const url = import.meta.env.VITE_BACKEND_URL+'/events/';
+      const url = import.meta.env.VITE_BACKEND_URL + '/events/';
       const response = await axios.get(url);
       setEvents(response.data);
       setApiStatus(apiStatusConstants.success);
@@ -45,6 +47,9 @@ const Events = () => {
   useEffect(() => {
     getEvents();
   }, []);
+
+  console.log(events)
+  console.log(my_events)
 
   const renderEventsDetailsView = () => (
     <>
@@ -73,14 +78,14 @@ const Events = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-10">
         {events.map((event, index) => (
-          <Card event={event} key={index} id={index} register />
+          <Card event={event} key={index} id={index} registered={my_events.includes(event._id)} register />
         ))}
       </div>
     </div>
     </>
   );
 
-  
+
 
   const renderFailureView = () => (
     <div className="flex flex-col items-center justify-center min-h-screen text-center text-red-500">
@@ -92,7 +97,7 @@ const Events = () => {
       <p className="text-lg font-semibold">Failed to load events. Please try again later.</p>
     </div>
   );
-  
+
 
   const renderEventDetails = () => {
     switch (apiStatus) {
