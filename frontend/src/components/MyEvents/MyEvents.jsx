@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext,useEffect,useState } from "react";
 import axios from "axios";
 import Card from "../Card/Card";
 import { ClipLoader } from "react-spinners";
@@ -16,7 +16,13 @@ const apiStatusConstants = {
 
 const MyEvents = () => {
 
-  const { apiStatus, eventDetails, soloEventDetails, user, accessToken } = useContext(EventContext)
+  const { apiStatus, eventDetails, soloEventDetails, user, accessToken,setUser} = useContext(EventContext)
+  const [isEdit,setIsEdit]=useState(false);
+  const [image,setImage]=useState(null);
+  const [userData,setUserData]=useState({name:''});
+
+
+  console.log(userData)
 
   const renderLoggedOutView = () => (
     <div className="flex flex-col items-center justify-center min-h-screen text-center">
@@ -28,7 +34,9 @@ const MyEvents = () => {
     </div>
   );
 
-
+useEffect(()=>{
+setUserData({name:user.name,mobile:user.mobile,branch:user.branch});
+},[user])
 
   const renderFailureView = () => (
     <div className="flex flex-col items-center justify-center min-h-screen text-center text-red-500">
@@ -51,6 +59,38 @@ const MyEvents = () => {
     </div>
   );
 
+  const onSubmitProfileDetails = async (profileData) => {
+    try {
+      const formData = new FormData();
+      if (image) {
+        formData.append("img", image);
+      }
+      formData.append("name", profileData.name);
+      formData.append("mobile", profileData.mobile);
+      formData.append("branch", profileData.branch);
+  
+      const response = await axios.put(import.meta.env.VITE_BACKEND_URL+"/user/update-profile", formData, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+         
+        },
+      });
+  
+      if (response.status === 200) {
+        toast.success("Profile updated successfully!");
+        setUserData(response.data);
+        console.log(response.data)
+        setUser(prev=>({...prev,...response.data}))
+        setIsEdit(false);
+
+      }
+    } catch (error) {
+      toast.error("Failed to update profile. Try again!");
+      console.error(error);
+    }
+  };
+  
+
   const renderEventsDetailsView = () => {
     return (
       <div className="min-h-screen p-6">
@@ -62,18 +102,77 @@ const MyEvents = () => {
           </div>
           {user &&
             <div className="space-y-2">
-              <p className="text-white text-lg">
+              {
+  isEdit ? (
+    <div>
+      <img
+        src={user.img || "https://res.cloudinary.com/dsad92ak9/image/upload/cjxhkplev75abm5zha9c"}
+        alt="Profile"
+        className="w-24 h-24 rounded-full mb-4 border-2 border-green-400"
+      />
+      <label
+        htmlFor="image"
+        className="cursor-pointer border  text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-md"
+      >
+        Upload 
+      </label>
+      <input
+        type="file"
+        id="image"
+        className="hidden"
+        onChange={(e) => setImage(e.target.files[0])}
+      />
+    </div>
+  ) : (
+    <img
+      src={user.img || "https://res.cloudinary.com/dsad92ak9/image/upload/cjxhkplev75abm5zha9c"}
+      alt="Profile"
+      className="w-24 h-24 rounded-full mb-4 border-2 border-green-400"
+    />
+  )
+}
+
+              {
+                isEdit
+                ?<div className="flex items-center">
+                 <p><strong className="text-green-400 text-lg mr-2">Name:</strong></p><input className='bg-gray-50 text-lg font-medium max-w-60 mt-4' type='text' onChange={(e)=>{setUserData(prev=>({...prev,name:e.target.value}))}} value={userData.name}/>
+                </div>
+                :<p className="text-white text-lg">
                 <strong className="text-green-400">Name:</strong> {user.name}
               </p>
+              }
+              
               <p className="text-white text-lg">
                 <strong className="text-green-400">Email:</strong> {user.email}
               </p>
-              <p className="text-white text-lg">
+              {
+                isEdit
+                ?<div className="flex items-center">
+                  <p><strong className="text-green-400 text-lg mr-2">Phone:</strong></p>
+                  <input className='bg-gray-50 text-lg font-medium max-w-60 mt-4' type='text' onChange={(e)=>{setUserData(prev=>({...prev,phone:e.target.value}))}} value={userData.mobile}/>
+                </div>
+                :<p className="text-white text-lg">
                 <strong className="text-green-400">Phone:</strong> {user.mobile}
               </p>
+              }
+              
               <p className="text-white text-lg">
                 <strong className="text-green-400">Id:</strong> {user.collage_id}
               </p>
+
+              {
+                isEdit
+                ?<div className="flex items-center">
+                  <p><strong className="text-green-400 text-lg mr-2">Branch:</strong></p>
+                  <input className='bg-gray-50 text-lg font-medium max-w-60 mt-4' type='text' onChange={(e)=>{setUserData(prev=>({...prev,branch:e.target.value}))}} value={userData.branch}/>
+                </div>
+                :<p className="text-white text-lg">
+                <strong className="text-green-400">Branch:</strong> {user.branch&&user.branch}
+              </p>
+              }
+              
+              <button className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-md w-1/4" onClick={()=>{setIsEdit(true)}}>Edit</button>
+              <button className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-md w-1/4 ml-4" onClick={()=>{onSubmitProfileDetails(userData)}}>Save</button>
             </div>
           }
         </div>
