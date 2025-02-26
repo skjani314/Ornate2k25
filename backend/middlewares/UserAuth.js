@@ -6,19 +6,20 @@ import UserModel from '../models/UserModel.js';
 const UserAuth = async (req, res, next) => {
 
     try {
-        const token  =  req.headers.authorization.split(" ")[1];
+        const token = req.headers.authorization.split(" ")[1];
 
-       
+
         if (!token) {
             return next(new Error("User Not Found"));
         }
         else {
-      console.log(token);
             const token_decode = await jwt.verify(token, process.env.KEY);
-            const {id}=token_decode;
+            const { id } = token_decode;
+            console.log(token_decode);
+
             req.id = id;
             const user = await UserModel.findById(token_decode.id);
-            
+           
             if (user != null) {
                 next();
             }

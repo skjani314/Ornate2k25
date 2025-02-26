@@ -8,7 +8,9 @@ import EventContext from "./context/EventContext"
 import { useEffect, useState } from "react"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import axios from "axios"
+import axios from "axios";
+import UnauthorizedPage from "./components/unauthorized/UnautherizedPage"
+import Forgotpass from "./components/Navbar/ForgetPass"
 
 
 const apiStatusConstants = {
@@ -19,48 +21,49 @@ const apiStatusConstants = {
 };
 
 
-const App = () => { 
+const App = () => {
 
   const [messageApi, contextHolder] = message.useMessage();
 
- const [user,setUser]=useState(null);
-const [accessToken,setAccessToken]=useState(localStorage.getItem('accessToken')?localStorage.getItem('accessToken'):'');
+  const [user, setUser] = useState(null);
+  const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken') ? localStorage.getItem('accessToken') : '');
 
   const [apiStatus, setApiStatus] = useState(apiStatusConstants.initial);
   const [eventDetails, setEventDetails] = useState([]);
   const [soloEventDetails, setSoloEventDetails] = useState([]);
-  
+  const [my_events, setMySevents] = useState([]);
 
- 
-   
-   
-    const getEventDetails = async () => {
-      setApiStatus(apiStatusConstants.inProgress)
-      const token=localStorage.getItem('accessToken');
 
-      try {
-        const url = import.meta.env.VITE_BACKEND_URL + "/user/myevents/";
-        const response = await axios.get(url, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          }
-        });
-        
-        setEventDetails(response.data.team);
-        setSoloEventDetails(response.data.solo);
-        setApiStatus(apiStatusConstants.success);
-  
-      } catch (err) {
-        console.error("Error fetching events:", err);
-        setApiStatus(apiStatusConstants.failure);
-      }
-    
-    };
-  
-    useEffect(() => {
-      getEventDetails();
-    }, [accessToken]);
+
+
+  const getEventDetails = async () => {
+    setApiStatus(apiStatusConstants.inProgress)
+    const token = localStorage.getItem('accessToken');
+
+    try {
+      const url = import.meta.env.VITE_BACKEND_URL + "/user/myevents/";
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        }
+      });
+
+      setEventDetails(response.data.team);
+      setSoloEventDetails(response.data.solo);
+      setApiStatus(apiStatusConstants.success);
+      setMySevents(response.data.my_events);
+
+    } catch (err) {
+      console.error("Error fetching events:", err);
+      setApiStatus(apiStatusConstants.failure);
+    }
+
+  };
+
+  useEffect(() => {
+    getEventDetails();
+  }, [accessToken]);
 
 
   const success = (msg) => {
@@ -77,30 +80,32 @@ const [accessToken,setAccessToken]=useState(localStorage.getItem('accessToken')?
   };
 
 
-const data={
-  success,
-  error,
-  contextHolder,
-  user,
-  setUser,
-  accessToken,
-  setAccessToken,
-  apiStatus,
-  eventDetails,
-  soloEventDetails,
- 
-}
+  const data = {
+    success,
+    error,
+    contextHolder,
+    user,
+    setUser,
+    accessToken,
+    setAccessToken,
+    apiStatus,
+    eventDetails,
+    soloEventDetails,
+    getEvents: getEventDetails,
+    my_events
+
+  }
 
 
-useEffect(()=>{
+  useEffect(() => {
 
 
-const getUser=async ()=>{
+    const getUser = async () => {
 
-const token=localStorage.getItem('accessToken');
-console.log(token);
-if(token!=null){
-  setAccessToken(token);
+      const token = localStorage.getItem('accessToken');
+      console.log(token);
+      if (token != null) {
+        setAccessToken(token);
 
         const result = await axios.get(import.meta.env.VITE_BACKEND_URL + '/user/profile', {
           headers: {
@@ -128,7 +133,7 @@ if(token!=null){
         <Routes>
           <Route exact path="/home" element={<Events />} />
           <Route exact path="/my-account" element={<MyEvents />} />
-
+          <Route path='/forgot/:token' element={<Forgotpass />} />
           <Route exact path="/admin" element={user && user.role == 'organizer' ? <Admin /> : <UnauthorizedPage />} />
 
         </Routes>

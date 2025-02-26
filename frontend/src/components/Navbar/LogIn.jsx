@@ -248,12 +248,12 @@ function LogIn(props) {
     setLoading(true);
 
     try {
-      const result = await axios.post(import.meta.env.BACKEND_URL + '/forget', { email: forgetpass.email })
+      const result = await axios.post(import.meta.env.VITE_BACKEND_URL + '/user/auth/forget', { email: forgetpass.email })
       success("Reset Link sent to Mail Successfully");
       setLoading(false);
       setForgetPass({ email: '', flag: false });
       setOtpform(false);
-      props.handleModalCancel();
+      // props.handleModalCancel();
 
     } catch {
       error("User not found");

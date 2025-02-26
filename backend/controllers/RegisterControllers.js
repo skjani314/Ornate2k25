@@ -30,11 +30,12 @@ const SoloUnregister = async (req, res, next) => {
 
     try {
 
-        const { id } = req.params;
+        const { id ,event_id} = req.body;
+        console.log(id);
         if (id == req.id) {
-            const result = await RegisterModel.deleteOne({ user_id: id });
+            const result = await RegisterModel.deleteOne({ user_id: id ,event_id:event_id});
 
-            res.json(result);
+            res.json(result); 
         } else {
             next(new Error("unauthorized"))
         }
@@ -93,7 +94,9 @@ const JoinTeam = async (req, res, next) => {
             const team = await TeamModel.findOne({ team_code: team_code, event_id: eventObj });
             const event = await EventModel.findById(eventObj);
             console.log(event);
-            if (team != null && team.members.length <= event.team_size) {
+            const teamSize = Number(event.team_size);
+
+            if (team != null && !isNaN(teamSize) && team.members.length < teamSize - 1) {
                 const result = await TeamModel.findByIdAndUpdate(team._id, { $addToSet: { members: user_id } }, { new: true });
                 res.json(result);
             }

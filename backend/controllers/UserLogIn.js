@@ -134,7 +134,12 @@ const ForgetPassword = async (req, res, next) => {
 
         const { email } = req.body;
         console.log(email);
-        const user = await UserModel.findOne({ email });
+        let user = await OrganizerModel.findOne({ email });
+
+        if (!user) {
+            user = await UserModel.findOne({ email });
+
+        }
 
         if (!user) {
             next(new Error("User Not Found"));
@@ -213,7 +218,7 @@ const ForgetVerify = async (req, res, next) => {
 const passChange = async (req, res, next) => {
 
     const { token } = req.body;
-    const pass = req.body.password;
+    const pass = req.body.data.password;
 
     try {
 
@@ -227,6 +232,10 @@ const passChange = async (req, res, next) => {
                 const hashpassword = await bcrypt.hash(pass, 10);
                 console.log(hashpassword)
                 const result = await UserModel.findOneAndUpdate({ email }, { password: hashpassword }, { new: true, runValidators: true });
+                if (!result) {
+                    const result = await OrganizerModel.findOneAndUpdate({ email }, { password: hashpassword }, { new: true, runValidators: true });
+
+                }
                 res.status(200).json("Password changed");
 
             }
@@ -350,7 +359,10 @@ const MyEvents = async (req, res, next) => {
             .populate("members", "name email");
         console.log(teams);
 
-        res.json({ solo: result_solo, team: teams });
+        const solo_eve = (result_solo || []).map((each) => each?.event_id?._id).filter(Boolean);
+        const team_eve = (teams || []).map((each) => each?.event_id?._id).filter(Boolean);
+
+        res.json({ solo: result_solo, team: teams, my_events: [...solo_eve, ...team_eve] });
 
     } catch (err) {
         next(err);

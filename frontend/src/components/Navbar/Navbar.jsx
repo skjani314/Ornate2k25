@@ -41,18 +41,19 @@ const Navbar = (props) => {
 
 
         <ul className="hidden md:flex space-x-6 flex items-center">
-          {navList.map((each) => (
-            <NavLink
-              key={each.id}
-              to={`/${each.id.toLowerCase()}`}
-              className=
-              {`text-white font-semibold`}
-            >
-              {each.displayText}
-              <hr className='border-none outline-none h-0.5 w-4/5 bg-white m-auto hidden' />
-            </NavLink>
+          {
+            navList.map((each) => (
+              <NavLink
+                key={each.id}
+                to={`/${each.id.toLowerCase()}`}
+                className=
+                {`text-white font-semibold`}
+              >
+                {each.displayText}
+                <hr className='border-none outline-none h-0.5 w-4/5 bg-white m-auto hidden' />
+              </NavLink>
 
-          ))}
+            ))}
           {user === null ?
             <button onClick={() => setModel(true)} className="hidden md:block bg-green-500 p-2 text-white rounded-xl w-[80px] hover:bg-white hover:text-green-600 font-bold">
               Login

@@ -9,7 +9,7 @@ import EventContext from "../../context/EventContext";
 import TeamMemberList from "../MyEvents/TeamMemberList";
 
 
-const Card = ({ event, id, register, admin, members, team_lead, team_code, team_name, team_id }) => {
+const Card = ({ solo, event, id, registered, register, admin, members, team_lead, team_code, team_name, team_id }) => {
   const { user } = useContext(EventContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEdit, setEdit] = useState(false);
@@ -20,7 +20,7 @@ const Card = ({ event, id, register, admin, members, team_lead, team_code, team_
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [myteam, setMyTeam] = useState(false);
-  const { success, error, getEvents } = useContext(EventContext);
+  const { success, error, getEvents, my_events } = useContext(EventContext);
   const accessToken = localStorage.getItem('accessToken');
   const handleUploadChange = ({ fileList }) => {
     setFileList(fileList.reverse());
@@ -120,6 +120,7 @@ const Card = ({ event, id, register, admin, members, team_lead, team_code, team_
 
       if (response.status === 201) {
         toast.success('Registration successful');
+        getEvents();
       } else {
         toast.error(response.data.error || 'Registration failed');
       }
@@ -287,8 +288,28 @@ const Card = ({ event, id, register, admin, members, team_lead, team_code, team_
       console.error("Error submitting event:", error);
     }
   };
+  const handleSoloUnregister = async (e) => {
+    e.stopPropagation()
 
-  console.log(members);
+    try {
+      const url = import.meta.env.VITE_BACKEND_URL + '/register/solounregister';
+      const form_data = new FormData();
+      form_data.append("id", user._id);
+      form_data.append("event_id", event._id);
+      const result = await axios.post(url, form_data, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      })
+      getEvents();
+    }
+    catch (err) {
+      console.log(err);
+    }
+
+  }
+
   return (
     <>
       <div id={id}
@@ -315,16 +336,27 @@ const Card = ({ event, id, register, admin, members, team_lead, team_code, team_
           <p className="text-red-300 text-sm mt-1">
             ⏳ <strong>Deadline:</strong> {event.deadline ? dayjs(event.deadline).format("D ddd YYYY") : "Loading..."}
           </p>
-          {register ? <div className="text-center mt-3">
-            <button className="bg-gray-700 hover:bg-green-600 hover:border-green-600 text-white font-semibold py-2 px-4 rounded-xl border border-gray-600 w-1/3 transition duration-300 shadow-lg" onClick={(e) => { handleRegister(e) }}>Register</button>
-          </div> :
+          {register ?
+            registered !== true ?
+              <div className="text-center mt-3">
+                <button className="bg-gray-700 hover:bg-green-600 hover:border-green-600 text-white font-semibold py-2 px-4 rounded-xl border border-gray-600 w-1/3 transition duration-300 shadow-lg" onClick={(e) => { handleRegister(e) }}>Register</button>
+              </div>
+              : <div className="text-center mt-3">
+                <button className="bg-green-600 hover:bg-gray-600 hover:border-green-600 text-white font-semibold py-2 px-4 rounded-xl border border-gray-600 w-2/3 transition duration-300 shadow-lg" >Registered</button>
+              </div>
+            :
             admin ? <div className="mt-3 flex">
               <button className="bg-gray-700 hover:bg-green-600 hover:border-green-600 text-white font-semibold py-2 px-4 rounded-xl border border-gray-600 w-1/3 transition duration-300 shadow-lg ml-3" onClick={(e) => { handleEdit(e) }}>Edit</button>
               <button className="bg-gray-700 hover:bg-green-600 hover:border-green-600 text-white font-semibold py-2 px-4 rounded-xl border border-gray-600 w-1/3 transition duration-300 shadow-lg ml-3" onClick={(e) => { handleRemove(e) }}>Remove</button>
             </div> :
-              <div className="text-center mt-3">
-                <button className="bg-gray-700 hover:bg-green-600 hover:border-green-600 text-white font-semibold py-2 px-4 rounded-xl border border-gray-600 w-2/3 transition duration-300 shadow-lg" onClick={(e) => { handleTeam(e) }}>My Team</button>
-              </div>}
+              solo ?
+                <div className="text-center mt-3">
+                  <button className="bg-gray-700 hover:bg-green-600 hover:border-green-600 text-white font-semibold py-2 px-4 rounded-xl border border-gray-600 w-2/3 transition duration-300 shadow-lg" onClick={handleSoloUnregister} >Un Register</button>
+                </div>
+                :
+                <div className="text-center mt-3">
+                  <button className="bg-gray-700 hover:bg-green-600 hover:border-green-600 text-white font-semibold py-2 px-4 rounded-xl border border-gray-600 w-2/3 transition duration-300 shadow-lg" onClick={(e) => { handleTeam(e) }}>My Team</button>
+                </div>}
         </div>
 
         <Modal
