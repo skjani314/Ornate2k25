@@ -117,9 +117,11 @@ const Admin = () => {
       values.deadline = new Date(values.deadline.toISOString());
       console.log("Form Values:", values);
       const form_Data = new FormData();
-      fileList.forEach(file => {
-        form_Data.append('img', file.originFileObj);
-      });
+      if (fileList && fileList.length > 0) {
+        fileList.forEach(file => {
+            form_Data.append('img', file.originFileObj);
+        });
+    }
       form_Data.append('name', values.name);
       form_Data.append('date', values.date);
       form_Data.append('deadline', values.deadline);
@@ -136,7 +138,7 @@ const Admin = () => {
       const result = await axios.post(url, form_Data, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
+         
         }
       });
       console.log(result);

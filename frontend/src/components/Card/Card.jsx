@@ -281,7 +281,7 @@ const Card = ({ solo, event, id, registered, register, admin, members, team_lead
       const result = await axios.put(url, form_Data, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
+      
         }
       });
       console.log(result);

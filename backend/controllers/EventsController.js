@@ -16,6 +16,7 @@ const AddEvent = async (req, res, next) => {
         const { name, date, deadline, location, from_time, to_time, des, team_size } = req.body;
         console.log(req.body);
         const imageFile = req.file;
+        console.log(imageFile)
         if (imageFile) {
             const imageUpload = await cloudinary.uploader.upload(imageFile.path, { resource_type: 'image' })
             const imageUrl = imageUpload.secure_url
