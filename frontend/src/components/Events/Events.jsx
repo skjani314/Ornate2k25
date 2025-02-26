@@ -1,6 +1,6 @@
 import Card from "../Card/Card";
 import { useState, useEffect, useContext } from "react";
-import { useState, useEffect, useContext } from "react";
+
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
 import { Input, Space } from "antd";

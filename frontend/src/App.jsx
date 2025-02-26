@@ -22,7 +22,6 @@ const apiStatusConstants = {
 
 
 const App = () => {
-
   const [messageApi, contextHolder] = message.useMessage();
 
   const [user, setUser] = useState(null);

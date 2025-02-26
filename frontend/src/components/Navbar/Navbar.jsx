@@ -22,6 +22,8 @@ const Navbar = (props) => {
   const [otpform, setOtpform] = useState(false);
   const {user,accessToken,setAccessToken,setUser,setIsSearchActive,isSearchActive}=useContext(EventContext);  
 
+  
+
 const navigate=useNavigate();
   const handleCancel=()=>{
     setModel(false);
@@ -36,7 +38,7 @@ const navigate=useNavigate();
     <nav className={`bg-gradient-to-r from-indigo-500 to-indigo-400 p-3 w-full ${fix && 'fixed top-0 left-0 z-10'}`}>
       <div className="flex justify-between items-center w-full mx-auto">
      
-       <div className="flex justify-between items-center gap-12 w-2/3">
+       <div className="flex justify-between items-center gap-12 w-[60%]">
        <div className="flex items-center">
          <Link to="/home">
          <img
@@ -61,13 +63,13 @@ const navigate=useNavigate();
        </div>
     <div>
           
-    <ul className="hidden md:flex space-x-6 flex items-center">
+    <ul className={`hidden md:flex space-x-6 flex items-center `}>
           {navList.map((each) => (
            <NavLink
            key={each.id}
            to={`/${each.id.toLowerCase()}`}
            className=
-             {`text-white font-semibold`}
+             {`text-white font-semibold ${user&&user.role&&each.displayText==='My Account'&&'hidden'}`}
          >
            {each.displayText}
            <hr className='border-none outline-none h-0.5 w-4/5 bg-white m-auto hidden'/>
@@ -147,6 +149,7 @@ const navigate=useNavigate();
         <LogIn otpform={otpform} setOtpform={setOtpform} handleCancel={handleCancel} />
       </Modal>
     </nav>
+    
   );
 };
 
