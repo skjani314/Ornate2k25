@@ -215,4 +215,4 @@ const Announce = async (req, res, next) => {
 }
 
 
-export { AddEvent, GetEvents, DeleteEvent, UpdateEvent, Announce }
+export { AddEvent, GetEvents, DeleteEvent, UpdateEvent, Announce, EventRegister }
