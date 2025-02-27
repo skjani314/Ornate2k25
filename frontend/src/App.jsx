@@ -25,7 +25,7 @@ const apiStatusConstants = {
 const App = () => {
   const [messageApi, contextHolder] = message.useMessage();
 
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({name:'',mobile:'',branch:''});
   const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken') ? localStorage.getItem('accessToken') : '');
 
   const [apiStatus, setApiStatus] = useState(apiStatusConstants.initial);
@@ -35,7 +35,6 @@ const App = () => {
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [events, setEvents] = useState([]);
   const [search_events, setSearchEvents] = useState([]);
-
 
 
   const getEventDetails = async () => {
@@ -113,8 +112,8 @@ const App = () => {
     events,
     setEvents,
     search_events,
-    setSearchEvents
-
+    setSearchEvents,
+  
   }
 
 
