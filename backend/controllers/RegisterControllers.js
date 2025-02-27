@@ -13,7 +13,6 @@ const SoloRegister = async (req, res, next) => {
             return res.status(400).json({ error: "user_id and event_id are required" });
         }
 
-
         const result = await RegisterModel.create({
             user_id: new mongoose.Types.ObjectId(id),
             event_id: new mongoose.Types.ObjectId(event_id),
@@ -30,12 +29,12 @@ const SoloUnregister = async (req, res, next) => {
 
     try {
 
-        const { id ,event_id} = req.body;
+        const { id, event_id } = req.body;
         console.log(id);
         if (id == req.id) {
-            const result = await RegisterModel.deleteOne({ user_id: id ,event_id:event_id});
+            const result = await RegisterModel.deleteOne({ user_id: id, event_id: event_id });
 
-            res.json(result); 
+            res.json(result);
         } else {
             next(new Error("unauthorized"))
         }

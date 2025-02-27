@@ -23,10 +23,10 @@ const Admin = () => {
   const [search_events, setSearchEvents] = useState([]);
   const [fileList, setFileList] = useState([]);
   const [announc_id, setAnnounceId] = useState("");
-  const { success, contextHolder } = useContext(EventContext);
+  const { success, contextHolder, error } = useContext(EventContext);
   const accessToken = localStorage.getItem('accessToken');
   const [search_val, setSearchVal] = useState("");
-
+  const [hadavidi, setHadavidi] = useState("");
   const handleUploadChange = ({ fileList }) => {
     setFileList(fileList.reverse());
   };
@@ -109,7 +109,7 @@ const Admin = () => {
 
   useEffect(() => {
     getEvents();
-  }, [search_val]);
+  }, [hadavidi]);
 
   const handleSubmit = async (values) => {
     try {
@@ -146,6 +146,7 @@ const Admin = () => {
       form.resetFields();
       getEvents();
     } catch (error) {
+      error("invalid inputs");
       console.error("Error submitting event:", error);
     }
   };
@@ -192,7 +193,7 @@ const Admin = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-10">
         {events.map((event, index) => (
-          <Card event={event} key={index} id={index} getEvents={getEvents} setSearchVal={setSearchVal} admin />
+          <Card event={event} key={index} id={index} getEvents={getEvents} setSearchVal={setHadavidi} admin />
         ))}
       </div>
     </div>

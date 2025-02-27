@@ -150,6 +150,9 @@ const Registrations = (props) => {
                                     </h1>
                                 </div>
                                 <div className="space-y-4">
+                                    <p className="text-lg flex items-center gap-2 text-green-600">
+                                        <span><strong>Name: </strong>{data.event.name}</span>
+                                    </p>
                                     <p className="text-lg flex items-center gap-2 text-yellow-400">
                                         📅 {data.event ? dayjs(data.event.date).format("D ddd YYYY") : "Loading..."}
                                     </p>
@@ -249,7 +252,7 @@ const Registrations = (props) => {
                         <h4 className="text-lg font-bold text-white mt-4">Members</h4>
 
                         {isView?.members?.length > 0 ? (
-                            team.members.map((member, index) => (
+                            isView?.members.map((member, index) => (
                                 <div key={index} className="bg-[#2A2A3B] p-3 rounded-lg">
                                     <p className="text-gray-300"><span className="font-bold text-blue-400">Name:</span> {member.name}</p>
                                     <p className="text-gray-300"><span className="font-bold text-blue-400">Email:</span> {member.email}</p>
