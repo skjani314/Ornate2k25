@@ -6,6 +6,9 @@ import RegisterModel from "../models/RegisterModel.js";
 import UserModel from "../models/UserModel.js"
 import OrganizerModel from "../models/OrganizerModel.js";
 import TeamModel from "../models/TeamModel.js";
+import mongoose from "mongoose";
+import cloudinary from 'cloudinary';
+
 
 const UserLogin = async (req, res, next) => {
     try {
@@ -369,7 +372,37 @@ const MyEvents = async (req, res, next) => {
     }
 };
 
+const updateProfile=async(req,res,next)=>{
+    try{
+        const user_id=req.id;
+        console.log(user_id)
+        const objectId = new mongoose.Types.ObjectId(user_id)
+        console.log(objectId)
+        const {name,mobile,branch}=req.body;
+        const imageFile=req.file;
+        console.log(imageFile)
+        
+        
+        if (imageFile) {
+            console.log('hii')
+            const imageUpload = await cloudinary.uploader.upload(imageFile.path, { resource_type: 'image' })
+            const imageUrl = imageUpload.secure_url
+            const result = await UserModel.findByIdAndUpdate(objectId, { name, mobile,branch,img: imageUrl }, { new: true });
+            console.log(result)
+            res.json(result);    
+        
+        }
+        else {
+            const result = await UserModel.findByIdAndUpdate(objectId, { name, mobile,branch}, { new: true });
+            console.log(result)
+            res.json(result); 
+        }
+    }
+    catch(error){
+
+    }
+}
 
 
 
-export { UserLogin, UserRegister, SendOtp, passChange, OProfile, OLogin, ForgetPassword, ForgetVerify, Profile, MyEvents };
+export { UserLogin, UserRegister, SendOtp, passChange, OProfile, OLogin, ForgetPassword, ForgetVerify, Profile, MyEvents,updateProfile };

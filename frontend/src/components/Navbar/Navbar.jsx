@@ -24,6 +24,9 @@ const Navbar = (props) => {
   const [search_suggest, setSearchSuggest] = useState([]);
   const [search_value, setSearch_value] = useState("");
   const navigate = useNavigate();
+
+  console.log(user?.role)
+  
   const handleCancel = () => {
     setModel(false);
     setOtpform(false);
@@ -68,7 +71,7 @@ const Navbar = (props) => {
     <nav className={`bg-gradient-to-r from-indigo-500 to-indigo-400 p-3 w-full ${fix && 'fixed top-0 left-0 z-10'}`}>
       <div className="flex justify-between items-center w-full mx-auto">
 
-        <div className="flex justify-between items-center gap-12 w-2/3">
+        <div className={`flex justify-between items-center gap-12  ${user?.role==="organizer"?'w-5/6':'w-2/3'}`}>
           <div className="flex items-center">
             <Link to="/home">
               <img
@@ -106,16 +109,22 @@ const Navbar = (props) => {
             }
 
           </Space>
+          <div className={`${user?.role==="organizer"?'block':'hidden'}`}>
+          <NavLink to="/admin"><p className="text-white font-semibold">Home</p></NavLink>
+         
+          </div>
+
+          
         </div>
         <div>
-
-          <ul className="hidden md:flex space-x-6 flex items-center">
+          
+          <ul className={`hidden md:flex space-x-6 flex items-center`}>
             {navList.map((each) => (
               <NavLink
                 key={each.id}
                 to={`/${each.id.toLowerCase()}`}
                 className=
-                {`text-white font-semibold`}
+                {`text-white font-semibold ${user?.role==="organizer"&&'hidden'}`}
               >
                 {each.displayText}
                 <hr className='border-none outline-none h-0.5 w-4/5 bg-white m-auto hidden' />

@@ -316,8 +316,9 @@ const Card = ({ solo, setSearchVal, event, id, registered, register, admin, memb
     }
 
   }
+  
 
-  return (
+  return event &&(
     <>
       <div id={id}
         className="bg-gradient-to-b from-green-400  to-indigo-500 cursor-pointer p-1 rounded-xl shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-lg"
