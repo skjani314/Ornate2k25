@@ -10,6 +10,8 @@ import mongoose from "mongoose";
 import cloudinary from 'cloudinary';
 
 
+
+
 const UserLogin = async (req, res, next) => {
     try {
         const { email, password } = req.body;
@@ -384,6 +386,7 @@ const updateProfile=async(req,res,next)=>{
         
         
         if (imageFile) {
+            console.log('hii')
             const imageUpload = await cloudinary.uploader.upload(imageFile.path, { resource_type: 'image' })
             const imageUrl = imageUpload.secure_url
             const result = await UserModel.findByIdAndUpdate(objectId, { name, mobile,branch,img: imageUrl }, { new: true });

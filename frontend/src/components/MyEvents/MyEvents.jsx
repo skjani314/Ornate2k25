@@ -19,7 +19,7 @@ const MyEvents = () => {
   const { apiStatus, eventDetails, soloEventDetails, user, accessToken,setUser} = useContext(EventContext)
   const [isEdit,setIsEdit]=useState(false);
   const [image,setImage]=useState(null);
-  const [userData,setUserData]=useState({name:''});
+  const [userData,setUserData]=useState({name:'',mobile:'',branch:''});
 
 
   console.log(userData)
@@ -35,7 +35,7 @@ const MyEvents = () => {
   );
 
 useEffect(()=>{
-setUserData({name:user.name,mobile:user.mobile,branch:user.branch});
+setUserData({name:user?.name,mobile:user?.mobile,branch:user?.branch});
 },[user])
 
   const renderFailureView = () => (
