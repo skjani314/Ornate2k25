@@ -27,6 +27,9 @@ const Card = ({ solo, setSearchVal, event, id, registered, register, admin, memb
     setFileList(fileList.reverse());
   };
 
+
+  console.log(new Date(Date.now()).toISOString() <= event.deadline);
+
   const handleCreateTeam = async (e) => {
     e.preventDefault();
     if (!teamName.trim()) {
@@ -316,9 +319,9 @@ const Card = ({ solo, setSearchVal, event, id, registered, register, admin, memb
     }
 
   }
-  
 
-  return event &&(
+
+  return event && (
     <>
       <div id={id}
         className="bg-gradient-to-b from-green-400  to-indigo-500 cursor-pointer p-1 rounded-xl shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-lg"
@@ -346,12 +349,23 @@ const Card = ({ solo, setSearchVal, event, id, registered, register, admin, memb
           </p>
           {register ?
             registered !== true ?
-              <div className="text-center mt-3">
-                <button className="bg-gray-700 hover:bg-green-600 hover:border-green-600 text-white font-semibold py-2 px-4 rounded-xl border border-gray-600 w-1/3 transition duration-300 shadow-lg" onClick={(e) => { handleRegister(e) }}>Register</button>
-              </div>
-              : <div className="text-center mt-3">
-                <button className="bg-green-600 hover:bg-gray-600 hover:border-green-600 text-white font-semibold py-2 px-4 rounded-xl border border-gray-600 w-2/3 transition duration-300 shadow-lg" >Registered</button>
-              </div>
+              new Date(Date.now()).toISOString() <= event.deadline ?
+                <div className="text-center mt-3">
+                  <button className="bg-gray-700 hover:bg-green-600 hover:border-green-600 text-white font-semibold py-2 px-4 rounded-xl border border-gray-600 w-1/3 transition duration-300 shadow-lg" onClick={(e) => { handleRegister(e) }}>Register</button>
+                </div>
+                : <div className="text-center mt-3">
+                  <button className="bg-gray-700 hover:bg-green-600 hover:border-green-600 text-white font-semibold py-2 px-4 rounded-xl border border-gray-600 w-1/3 transition duration-300 shadow-lg">Closed</button>
+                </div>
+              :
+              new Date(Date.now()).toISOString() <= event.deadline ?
+                <div className="text-center mt-3">
+                  <button className="bg-green-600 hover:bg-gray-600 hover:border-green-600 text-white font-semibold py-2 px-4 rounded-xl border border-gray-600 w-2/3 transition duration-300 shadow-lg" >Registered</button>
+                </div>
+                :
+                <div className="text-center mt-3">
+                  <button className="bg-green-600 hover:bg-gray-600 hover:border-green-600 text-white font-semibold py-2 px-4 rounded-xl border border-gray-600 w-2/3 transition duration-300 shadow-lg" >Participated</button>
+                </div>
+
             :
             admin ?
               <div className="flex-col ">

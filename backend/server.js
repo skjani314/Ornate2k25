@@ -13,7 +13,8 @@ const port = process.env.PORT || 5000;
 connectDB();
 connectCloudinary();
 app.use(express.json());
-app.use(cors()); 
+app.use(cors('localhost:5173'
+));
 app.use(upload.single('img'));
 app.use('/user', UserRouter);
 app.use('/events', EventRouter);
