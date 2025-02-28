@@ -27,6 +27,10 @@ const Admin = () => {
   const accessToken = localStorage.getItem('accessToken');
   const [search_val, setSearchVal] = useState("");
   const [hadavidi, setHadavidi] = useState("");
+
+  const [bulk, setBulk] = useState(false);
+
+
   const handleUploadChange = ({ fileList }) => {
     setFileList(fileList.reverse());
   };
@@ -107,6 +111,39 @@ const Admin = () => {
     }
   };
 
+  const handleBulk = async () => {
+
+
+    try {
+
+      const url = import.meta.env.VITE_BACKEND_URL + "/events/bulk";
+      const form_data = new FormData();
+      fileList.forEach(file => {
+        form_data.append('img', file.originFileObj);
+      });
+
+
+      const result = await axios.post(url, form_data, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+
+        }
+      });
+      console.log(fileList);
+      console.log(result);
+
+
+    }
+    catch (err) {
+      console.log(err);
+      error("something went wrong")
+    }
+
+
+
+
+  }
+
   useEffect(() => {
     getEvents();
   }, [hadavidi]);
@@ -164,6 +201,10 @@ const Admin = () => {
     </div>
   );
 
+
+
+
+
   const renderLoadingView = () => (
     <div className="flex justify-center items-center min-h-screen" data-testid="loader">
       <ClipLoader color="#0b69ff" size={50} />
@@ -188,6 +229,12 @@ const Admin = () => {
           >
             Announcement
           </button>
+          <button className="text-lg text-white border w-2/3 px-4 rounded-xl hover:bg-primary-800 hover:border-none"
+            onClick={() => setBulk(true)}
+          >
+            Upload
+          </button>
+
         </div>
       </div>
 
@@ -348,6 +395,18 @@ const Admin = () => {
             </Button>
           </Form.Item>
         </Form>
+      </Modal>
+      <Modal open={bulk} footer={null} onCancel={() => setBulk(false)} title={"Bulk Addition"} >
+        <Upload
+          beforeUpload={() => false}
+          fileList={fileList}
+          onChange={handleUploadChange}
+          className="px-4"
+        >  <Button ><FaUpload /> Upload</Button>
+        </Upload>
+        <div>
+          <Button type="primary" onClick={handleBulk}>Submit</Button>
+        </div>
       </Modal>
     </>
   );

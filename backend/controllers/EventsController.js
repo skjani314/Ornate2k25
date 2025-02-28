@@ -4,7 +4,9 @@ import TeamModel from "../models/TeamModel.js";
 import mongoose from "mongoose";
 import nodemailer from 'nodemailer';
 import cloudinary from 'cloudinary';
-
+import xlsx from 'xlsx';
+import UserModel from "../models/UserModel.js";
+import bcrypt from 'bcrypt';
 
 const AddEvent = async (req, res, next) => {
 
@@ -326,4 +328,37 @@ const Announce = async (req, res, next) => {
 }
 
 
-export { AddEvent, GetEvents, DeleteEvent, UpdateEvent, Announce, EventRegister }
+const BulkAddition = async (req, res, next) => {
+
+    try {
+        const workbook = xlsx.readFile(req.file.path, { cellDates: true });
+
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const data = xlsx.utils.sheet_to_json(worksheet);
+
+        const result = await Promise.all(
+            data.map(async (each) => {
+                try {
+                    const { branch, collage_id, email, mobile, name } = each;
+                    const password = collage_id.slice(0, 4) + mobile % 10000;
+                    const hashpassword = await bcrypt.hash(password, 10);
+                    const response = await UserModel.create({ name, email, password: hashpassword, mobile, collage_id, branch })
+                    console.log(password);
+                    return response;
+                }
+                catch (err) {
+                    return next(err);
+                }
+
+            })
+        )
+        res.json(result);
+    } catch (err) {
+        next(err);
+    }
+
+}
+
+
+export { AddEvent, GetEvents, DeleteEvent, UpdateEvent, Announce, EventRegister, BulkAddition }
